@@ -17,7 +17,10 @@ class PageFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'language_id' => $this->faker->randomElement([1, 2, 3]),
+            'key' => $this->faker->word(),
+            'content_md' => $this->faker->sentences(10, true),
+            'is_active' => $this->faker->boolean(),
         ];
     }
 }

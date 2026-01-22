@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\PostStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,16 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'language_id' => $this->faker->randomElement([1, 2, 3]),
+            'title' => $this->faker->sentence(),
+            'slug' => $this->faker->slug(),
+            'content_md' => $this->faker->sentences(10, true),
+            'status' => $this->faker->randomElement([
+                PostStatus::DRAFT->value,
+                PostStatus::PUBLISHED->value,
+                PostStatus::ARCHIVED->value,
+            ]),
+            'published_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
     }
 }
