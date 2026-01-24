@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 import PasswordController from '@/actions/App/Http/Controllers/Settings/PasswordController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
@@ -12,10 +13,13 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/user-password';
 import { type BreadcrumbItem } from '@/types';
 
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
+
 const breadcrumbItems: BreadcrumbItem[] = [
     {
         title: 'Password settings',
-        href: edit().url,
+        href: edit({locale: locale.value}).url,
     },
 ];
 </script>
@@ -34,7 +38,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                 />
 
                 <Form
-                    v-bind="PasswordController.update.form()"
+                    v-bind="PasswordController.update.form({locale: locale})"
                     :options="{
                         preserveScroll: true,
                     }"

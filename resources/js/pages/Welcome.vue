@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { dashboard, login, register } from '@/routes';
+
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
+const languages = computed(() => page.props.languages as Array<{ id: number; code: string; name: string }>);
 
 withDefaults(
     defineProps<{
@@ -11,6 +15,20 @@ withDefaults(
         canRegister: true,
     },
 );
+
+function switchLanguage(languageCode: string) {
+    const currentUrl = window.location.pathname;
+    const pathParts = currentUrl.split('/');
+    
+    // Replace the locale in the URL
+    if (pathParts[1] && pathParts[1].length === 2) {
+        pathParts[1] = languageCode;
+    } else {
+        pathParts.splice(1, 0, languageCode);
+    }
+    
+    window.location.href = pathParts.join('/');
+}
 </script>
 
 <template>
@@ -24,29 +42,42 @@ withDefaults(
         <header
             class="mb-6 w-full max-w-[335px] text-sm not-has-[nav]:hidden lg:max-w-4xl"
         >
-            <nav class="flex items-center justify-end gap-4">
-                <Link
-                    v-if="$page.props.auth.user"
-                    :href="dashboard()"
-                    class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
-                >
-                    Dashboard
-                </Link>
-                <template v-else>
-                    <Link
-                        :href="login()"
-                        class="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
+            <nav class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-2">
+                    <select 
+                        :value="locale"
+                        @change="switchLanguage(($event.target as HTMLSelectElement).value)"
+                        class="rounded-sm border border-[#19140035] px-2 py-1.5 text-sm leading-normal text-[#1b1b18] dark:border-[#3E3E3A] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]"
                     >
-                        Log in
-                    </Link>
+                        <option v-for="language in languages" :key="language.code" :value="language.code">
+                            {{ language.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-4">
                     <Link
-                        v-if="canRegister"
-                        :href="register()"
+                        v-if="$page.props.auth.user"
+                        :href="dashboard({locale: locale})"
                         class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
                     >
-                        Register
+                        Dashboard
                     </Link>
-                </template>
+                    <template v-else>
+                        <Link
+                            :href="login({locale: locale})"
+                            class="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
+                        >
+                            Log in
+                        </Link>
+                        <Link
+                            v-if="canRegister"
+                            :href="register({locale: locale})"
+                            class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                        >
+                            Register
+                        </Link>
+                    </template>
+                </div>
             </nav>
         </header>
         <div

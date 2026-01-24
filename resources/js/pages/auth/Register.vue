@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -10,6 +11,9 @@ import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
+
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
 </script>
 
 <template>
@@ -18,9 +22,8 @@ import { store } from '@/routes/register';
         description="Enter your details below to create your account"
     >
         <Head title="Register" />
-
         <Form
-            v-bind="store.form()"
+            v-bind="store.form({locale: locale})"
             :reset-on-success="['password', 'password_confirmation']"
             v-slot="{ errors, processing }"
             class="flex flex-col gap-6"
@@ -98,12 +101,12 @@ import { store } from '@/routes/register';
             <div class="text-center text-sm text-muted-foreground">
                 Already have an account?
                 <TextLink
-                    :href="login()"
+                    :href="login({locale: locale})"
                     class="underline underline-offset-4"
                     :tabindex="6"
                     >Log in</TextLink
                 >
             </div>
-        </Form>
+        </form>
     </AuthBase>
 </template>

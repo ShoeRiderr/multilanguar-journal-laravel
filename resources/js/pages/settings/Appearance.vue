@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 import AppearanceTabs from '@/components/AppearanceTabs.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
@@ -8,10 +9,13 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/appearance';
 import { type BreadcrumbItem } from '@/types';
 
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
+
 const breadcrumbItems: BreadcrumbItem[] = [
     {
         title: 'Appearance settings',
-        href: edit().url,
+        href: edit({locale: locale.value}).url,
     },
 ];
 </script>

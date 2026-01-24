@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, usePage } from '@inertiajs/vue3';
 import { ShieldBan, ShieldCheck } from 'lucide-vue-next';
-import { onUnmounted, ref } from 'vue';
+import { computed, onUnmounted, ref } from 'vue';
 
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import TwoFactorRecoveryCodes from '@/components/TwoFactorRecoveryCodes.vue';
@@ -24,12 +24,15 @@ withDefaults(defineProps<Props>(), {
     twoFactorEnabled: false,
 });
 
-const breadcrumbs: BreadcrumbItem[] = [
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
+
+const breadcrumbs = computed<BreadcrumbItem[]>(() => [
     {
         title: 'Two-Factor Authentication',
-        href: show.url(),
+        href: show({locale: locale.value}).url,
     },
-];
+]);
 
 const { hasSetupData, clearTwoFactorAuthData } = useTwoFactorAuth();
 const showSetupModal = ref<boolean>(false);
@@ -74,7 +77,7 @@ onUnmounted(() => {
                         </Button>
                         <Form
                             v-else
-                            v-bind="enable.form()"
+                            v-bind="enable.form({locale: locale})"
                             @success="showSetupModal = true"
                             #default="{ processing }"
                         >
@@ -101,7 +104,7 @@ onUnmounted(() => {
                     <TwoFactorRecoveryCodes />
 
                     <div class="relative inline">
-                        <Form v-bind="disable.form()" #default="{ processing }">
+                        <Form v-bind="disable.form({locale: locale})" #default="{ processing }">
                             <Button
                                 variant="destructive"
                                 type="submit"

@@ -30,6 +30,8 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        $locale = $request->route('locale');
+        
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
@@ -38,7 +40,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return to_route('profile.edit');
+        return to_route('profile.edit', ['locale' => $locale]);
     }
 
     /**
@@ -47,6 +49,7 @@ class ProfileController extends Controller
     public function destroy(ProfileDeleteRequest $request): RedirectResponse
     {
         $user = $request->user();
+        $locale = $request->route('locale');
 
         Auth::logout();
 
@@ -55,6 +58,6 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect("/{$locale}");
     }
 }

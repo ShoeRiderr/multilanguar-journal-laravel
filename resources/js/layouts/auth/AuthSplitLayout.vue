@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { home } from '@/routes';
 
 const page = usePage();
+const locale = computed(() => page.props.locale as string);
 const name = page.props.name;
 
 defineProps<{
@@ -22,7 +24,7 @@ defineProps<{
         >
             <div class="absolute inset-0 bg-zinc-900" />
             <Link
-                :href="home()"
+                :href="home({locale: locale})"
                 class="relative z-20 flex items-center text-lg font-medium"
             >
                 <AppLogoIcon class="mr-2 size-8 fill-current text-white" />

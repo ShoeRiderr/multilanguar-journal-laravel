@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Form, Head, usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,9 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { update } from '@/routes/password';
+
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
 
 const props = defineProps<{
     token: string;
@@ -26,7 +29,7 @@ const inputEmail = ref(props.email);
         <Head title="Reset password" />
 
         <Form
-            v-bind="update.form()"
+            v-bind="update.form({locale: locale})"
             :transform="(data) => ({ ...data, token, email })"
             :reset-on-success="['password', 'password_confirmation']"
             v-slot="{ errors, processing }"

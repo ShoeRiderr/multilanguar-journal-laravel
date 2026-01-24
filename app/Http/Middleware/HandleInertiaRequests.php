@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\Language;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -38,6 +39,8 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'locale' => $request->route('locale', 'en'),
+            'languages' => Language::all(['id', 'code', 'name'])->toArray(),
             'auth' => [
                 'user' => $request->user(),
             ],

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Form } from '@inertiajs/vue3';
+import { Form, usePage } from '@inertiajs/vue3';
 import { useClipboard } from '@vueuse/core';
 import { Check, Copy, ScanLine } from 'lucide-vue-next';
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
@@ -28,6 +28,9 @@ interface Props {
     requiresConfirmation: boolean;
     twoFactorEnabled: boolean;
 }
+
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
 
 const { resolvedAppearance } = useAppearance();
 
@@ -241,7 +244,7 @@ watch(
 
                 <template v-else>
                     <Form
-                        v-bind="confirm.form()"
+                        v-bind="confirm.form({locale: locale})"
                         reset-on-error
                         @finish="code = ''"
                         @success="isOpen = false"
@@ -272,7 +275,8 @@ watch(
                                 <InputError
                                     :message="
                                         errors?.confirmTwoFactorAuthentication
-                                            ?.code
+                                            ? errors.confirmTwoFactorAuthentication
+                                            : errors.code
                                     "
                                 />
                             </div>

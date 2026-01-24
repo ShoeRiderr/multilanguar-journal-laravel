@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -13,6 +14,8 @@ import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
 defineProps<{
     status?: string;
     canResetPassword: boolean;
@@ -35,7 +38,7 @@ defineProps<{
         </div>
 
         <Form
-            v-bind="store.form()"
+            v-bind="store.form({locale: locale})"
             :reset-on-success="['password']"
             v-slot="{ errors, processing }"
             class="flex flex-col gap-6"
@@ -61,7 +64,7 @@ defineProps<{
                         <Label for="password">Password</Label>
                         <TextLink
                             v-if="canResetPassword"
-                            :href="request()"
+                            :href="request({locale: locale})"
                             class="text-sm"
                             :tabindex="5"
                         >
@@ -104,7 +107,7 @@ defineProps<{
                 v-if="canRegister"
             >
                 Don't have an account?
-                <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
+                <TextLink :href="register({locale: locale})" :tabindex="5">Sign up</TextLink>
             </div>
         </Form>
     </AuthBase>

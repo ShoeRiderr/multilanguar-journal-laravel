@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,9 @@ import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
+
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
 
 defineProps<{
     status?: string;
@@ -29,7 +33,7 @@ defineProps<{
         </div>
 
         <Form
-            v-bind="send.form()"
+            v-bind="send.form({locale: locale})"
             class="space-y-6 text-center"
             v-slot="{ processing }"
         >
@@ -39,7 +43,7 @@ defineProps<{
             </Button>
 
             <TextLink
-                :href="logout()"
+                :href="logout({locale: locale})"
                 as="button"
                 class="mx-auto block text-sm"
             >

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 import InputError from '@/components/InputError.vue';
@@ -18,6 +18,9 @@ interface AuthConfigContent {
     description: string;
     toggleText: string;
 }
+
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
 
 const authConfigContent = computed<AuthConfigContent>(() => {
     if (showRecoveryInput.value) {
@@ -58,7 +61,7 @@ const code = ref<string>('');
         <div class="space-y-6">
             <template v-if="!showRecoveryInput">
                 <Form
-                    v-bind="store.form()"
+                    v-bind="store.form({locale: locale})"
                     class="space-y-4"
                     reset-on-error
                     @error="code = ''"
@@ -105,7 +108,7 @@ const code = ref<string>('');
 
             <template v-else>
                 <Form
-                    v-bind="store.form()"
+                    v-bind="store.form({locale: locale})"
                     class="space-y-4"
                     reset-on-error
                     #default="{ errors, processing, clearErrors }"

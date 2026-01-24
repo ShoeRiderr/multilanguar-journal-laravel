@@ -8,6 +8,11 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { store } from '@/routes/password/confirm';
+import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
 </script>
 
 <template>
@@ -18,7 +23,7 @@ import { store } from '@/routes/password/confirm';
         <Head title="Confirm password" />
 
         <Form
-            v-bind="store.form()"
+            v-bind="store.form({locale: locale})"
             reset-on-success
             v-slot="{ errors, processing }"
         >

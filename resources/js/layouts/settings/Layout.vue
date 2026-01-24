@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
@@ -12,24 +13,27 @@ import { show } from '@/routes/two-factor';
 import { edit as editPassword } from '@/routes/user-password';
 import { type NavItem } from '@/types';
 
-const sidebarNavItems: NavItem[] = [
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
+
+const sidebarNavItems = computed<NavItem[]>(() => [
     {
         title: 'Profile',
-        href: editProfile(),
+        href: editProfile({locale: locale.value ?? 'en'}),
     },
     {
         title: 'Password',
-        href: editPassword(),
+        href: editPassword({locale: locale.value ?? 'en'}),
     },
     {
         title: 'Two-Factor Auth',
-        href: show(),
+        href: show({locale: locale.value ?? 'en'}),
     },
     {
         title: 'Appearance',
-        href: editAppearance(),
+        href: editAppearance({locale: locale.value ?? 'en'}),
     },
-];
+]);
 
 const { urlIsActive } = useActiveUrl();
 </script>

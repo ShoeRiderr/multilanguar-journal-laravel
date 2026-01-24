@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import {
@@ -10,6 +11,9 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { home } from '@/routes';
+
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
 
 defineProps<{
     title?: string;
@@ -23,7 +27,7 @@ defineProps<{
     >
         <div class="flex w-full max-w-md flex-col gap-6">
             <Link
-                :href="home()"
+                :href="home({locale: locale})"
                 class="flex items-center gap-2 self-center font-medium"
             >
                 <div class="flex h-9 w-9 items-center justify-center">

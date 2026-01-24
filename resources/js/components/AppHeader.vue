@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { InertiaLinkProps } from '@inertiajs/vue3';
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-vue-next';
+import { BookOpen, Folder, LayoutGrid, Menu, Search, Globe } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 import AppLogo from '@/components/AppLogo.vue';
@@ -13,6 +13,9 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuTrigger,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import {
     NavigationMenu,
@@ -50,6 +53,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 const page = usePage();
 const auth = computed(() => page.props.auth);
+const locale = computed(() => page.props.locale as string);
+const languages = computed(() => page.props.languages as Array<{ id: number; code: string; name: string }>);
+const dashboardUrl = dashboard({locale: locale.value});
 const { urlIsActive } = useActiveUrl();
 
 function activeItemStyles(url: NonNullable<InertiaLinkProps['href']>) {
@@ -58,25 +64,39 @@ function activeItemStyles(url: NonNullable<InertiaLinkProps['href']>) {
         : '';
 }
 
-const mainNavItems: NavItem[] = [
+function switchLanguage(languageCode: string) {
+    const currentUrl = window.location.pathname;
+    const pathParts = currentUrl.split('/');
+    
+    // Replace the locale in the URL
+    if (pathParts[1] && pathParts[1].length === 2) {
+        pathParts[1] = languageCode;
+    } else {
+        pathParts.splice(1, 0, languageCode);
+    }
+    
+    window.location.href = pathParts.join('/');
+}
+
+const mainNavItems = computed<NavItem[]>(() => [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: dashboardUrl,
         icon: LayoutGrid,
     },
-];
+]);
 
 const rightNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
+    // {
+    //     title: 'Repository',
+    //     href: 'https://github.com/laravel/vue-starter-kit',
+    //     icon: Folder,
+    // },
+    // {
+    //     title: 'Documentation',
+    //     href: 'https://laravel.com/docs/starter-kits#vue',
+    //     icon: BookOpen,
+    // },
 ];
 </script>
 
@@ -146,7 +166,7 @@ const rightNavItems: NavItem[] = [
                     </Sheet>
                 </div>
 
-                <Link :href="dashboard()" class="flex items-center gap-x-2">
+                <Link :href="dashboardUrl" class="flex items-center gap-x-2">
                     <AppLogo />
                 </Link>
 
@@ -187,6 +207,35 @@ const rightNavItems: NavItem[] = [
 
                 <div class="ml-auto flex items-center space-x-2">
                     <div class="relative flex items-center space-x-1">
+                        <!-- Language Selector -->
+                        <DropdownMenu>
+                            <DropdownMenuTrigger :as-child="true">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    class="group h-9 w-9 cursor-pointer"
+                                >
+                                    <Globe
+                                        class="size-5 opacity-80 group-hover:opacity-100"
+                                    />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" class="w-40">
+                                <DropdownMenuRadioGroup
+                                    :value="locale"
+                                    @update:model-value="switchLanguage"
+                                >
+                                    <DropdownMenuRadioItem
+                                        v-for="language in languages"
+                                        :key="language.code"
+                                        :value="language.code"
+                                    >
+                                        {{ language.name }}
+                                    </DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
                         <Button
                             variant="ghost"
                             size="icon"

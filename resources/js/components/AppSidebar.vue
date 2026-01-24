@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { Link, usePage } from '@inertiajs/vue3';
+import { BookOpen, Folder, LayoutGrid, Tags } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -19,25 +20,34 @@ import { type NavItem } from '@/types';
 
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
+const page = usePage();
+const locale = computed(() => (page.props.locale as string) ?? 'en');
+const dashboardUrl = dashboard({locale: locale.value});
+
+const mainNavItems = computed<NavItem[]>(() => [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: dashboardUrl,
         icon: LayoutGrid,
     },
-];
+    {
+        title: 'Categories',
+        href: `/${locale.value}/categories`,
+        icon: Tags,
+    },
+]);
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
+    // {
+    //     title: 'Github Repo',
+    //     href: 'https://github.com/laravel/vue-starter-kit',
+    //     icon: Folder,
+    // },
+    // {
+    //     title: 'Documentation',
+    //     href: 'https://laravel.com/docs/starter-kits#vue',
+    //     icon: BookOpen,
+    // },
 ];
 </script>
 
@@ -47,7 +57,7 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
+                        <Link :href="dashboardUrl">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

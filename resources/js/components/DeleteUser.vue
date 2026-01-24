@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Form } from '@inertiajs/vue3';
-import { useTemplateRef } from 'vue';
+import { Form, usePage } from '@inertiajs/vue3';
+import { useTemplateRef, computed } from 'vue';
 
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
@@ -18,6 +18,10 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+
+const page = usePage();
+const locale = computed(() => page.props.locale as string);
+const destroyFormData = computed(() => ProfileController.destroy.form(locale.value));
 
 const passwordInput = useTemplateRef('passwordInput');
 </script>
@@ -45,7 +49,7 @@ const passwordInput = useTemplateRef('passwordInput');
                 </DialogTrigger>
                 <DialogContent>
                     <Form
-                        v-bind="ProfileController.destroy.form()"
+                        v-bind="destroyFormData"
                         reset-on-success
                         @error="() => passwordInput?.$el?.focus()"
                         :options="{
