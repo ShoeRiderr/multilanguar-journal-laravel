@@ -19,6 +19,8 @@ class RedirectIfNoLocale
         'forgot-password',
         'reset-password',
         'email/verify',
+        'dashboard',
+        'categories',
     ];
 
     public function handle(Request $request, Closure $next)
@@ -34,9 +36,27 @@ class RedirectIfNoLocale
             (!preg_match('/^[a-z]{2}$/', $first)) && 
             in_array($request->path(), $this->localeRoutes)
         ) {
-            return redirect("/{$languageId}/{$request->path()}");
+            return redirect()->route(
+                $this->getRouteName($request->path()),
+                ['locale' => $languageId]
+            );
         }
 
         return $next($request);
+    }
+
+    private function getRouteName(string $path): string
+    {
+        return match ($path) {
+            '/' => 'home',
+            'login' => 'login',
+            'register' => 'register',
+            'forgot-password' => 'password.request',
+            'reset-password' => 'password.reset',
+            'email/verify' => 'verification.notice',
+            'dashboard' => 'dashboard',
+            'categories' => 'categories.index',
+            default => 'home',
+        };
     }
 }

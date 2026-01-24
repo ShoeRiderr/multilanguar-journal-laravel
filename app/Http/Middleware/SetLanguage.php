@@ -16,18 +16,17 @@ class SetLanguage
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $locale = $request->route('locale', env('APP_LOCALE', 'en'));
+        $locale = $request->route(
+            'locale',
+            env(
+                'APP_LOCALE',
+                Language::where('is_default', true)->first()->code ?? 'en'
+            )
+        );
         
-        if ($locale) {
-            $language = Language::where('code', $locale)->firstOrFail();
-            $request->headers->set('Language-ID', $language->id);
-        } else {
-            // Set default language if no locale is provided
-            $defaultLanguage = Language::where('is_default', true)->first();
-            if ($defaultLanguage) {
-                $request->headers->set('Language-ID', $defaultLanguage->id);
-            }
-        }
+        $language = Language::where('code', $locale)->firstOrFail();
+        $request->headers->set('Language-ID', $language->id);
+        
         
         return $next($request);
     }

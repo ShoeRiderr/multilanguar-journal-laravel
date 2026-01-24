@@ -33,7 +33,10 @@ class AppServiceProvider extends ServiceProvider
         DB::prohibitDestructiveCommands(
             app()->isProduction(),
         );
-
+        $this->app->bind(
+            \Illuminate\Auth\Middleware\RedirectIfAuthenticated::class,
+            \App\Http\Middleware\RedirectIfAuthenticated::class
+        );
         Password::defaults(fn (): ?Password => app()->isProduction()
             ? Password::min(12)
                 ->mixedCase()
