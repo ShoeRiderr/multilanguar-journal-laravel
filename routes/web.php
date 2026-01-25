@@ -15,9 +15,17 @@ Route::middleware(['set.language'])->prefix('{locale}')->where(['locale' => '[a-
         return Inertia::render('Dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
 
-    Route::middleware(['auth', 'verified'])->group(function () {
-        Route::resource('categories', App\Http\Controllers\CategoryController::class)
-            ->except(['show']);
+    Route::middleware(['auth', 'verified'])
+        ->prefix('admin')
+        ->group(function () {
+            Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class)
+                ->except(['show']);
+            Route::resource('languages', App\Http\Controllers\Admin\LanguageController::class)
+                ->except(['show']);
+            Route::resource('posts', App\Http\Controllers\Admin\PostController::class)
+                ->except(['show']);
+            Route::resource('pages', App\Http\Controllers\Admin\PageController::class)
+                ->except(['show']);
     });
 
     require __DIR__.'/settings.php';

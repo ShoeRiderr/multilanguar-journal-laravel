@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
+use App\PostStatus;
 
 class UpdatePostRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class UpdatePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->authorize('update', $this->route('post'));
     }
 
     /**
@@ -22,7 +24,13 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'id' => ['required', 'exists:posts,id'],
+            'language_id' => ['required', 'exists:languages,id'],
+            'title' => ['required', 'string'],
+            'slug' => ['required', 'string'],
+            'content_md' => ['required', 'string'],
+            'status' => ['required', new Enum(PostStatus::class)],
+            'published_at' => ['required', 'date'],
         ];
     }
 }

@@ -1,10 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\StoreLanguageRequest;
 use App\Http\Requests\UpdateLanguageRequest;
 use App\Models\Language;
+use App\Http\Resources\LanguageResource;
+use Inertia\Inertia;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class LanguageController extends Controller
 {
@@ -13,7 +17,9 @@ class LanguageController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('languages/Index', [
+            'languages' => LanguageResource::collection(Language::paginate(10)),
+        ]);
     }
 
     /**
@@ -21,7 +27,11 @@ class LanguageController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('languages/Create', [
+            'can' => [
+                'create' => Auth::user()?->can('create', Language::class),
+            ],
+        ]);
     }
 
     /**
@@ -37,7 +47,12 @@ class LanguageController extends Controller
      */
     public function edit(Language $language)
     {
-        //
+        return Inertia::render('languages/Edit', [
+            'can' => [
+                'edit' => Auth::user()?->can('edit', Language::class),
+            ],
+            'language' => $language,
+        ]);
     }
 
     /**

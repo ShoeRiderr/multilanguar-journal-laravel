@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Tags } from 'lucide-vue-next';
+import { LayoutGrid, Tags, Book,  } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 import NavFooter from '@/components/NavFooter.vue';
@@ -21,6 +21,8 @@ import { type NavItem } from '@/types';
 import AppLogo from './AppLogo.vue';
 
 const page = usePage();
+const user = page.props.auth.user;
+const isAdmin = computed(() => (user && user.role === 'admin') ?? false as boolean);
 const locale = computed(() => (page.props.locale as string) ?? 'en');
 const dashboardUrl = dashboard({locale: locale.value});
 
@@ -32,8 +34,27 @@ const mainNavItems = computed<NavItem[]>(() => [
     },
     {
         title: 'Categories',
-        href: `/${locale.value}/categories`,
+        href: `/${locale.value}/admin/categories`,
         icon: Tags,
+        isDisplayed: isAdmin.value,
+    },
+    {
+        title: 'Languages',
+        href: `/${locale.value}/admin/languages`,
+        icon: Tags,
+        isDisplayed: isAdmin.value,
+    },
+    {
+        title: 'Posts',
+        href: `/${locale.value}/admin/posts`,
+        icon: Book,
+        isDisplayed: isAdmin.value,
+    },
+    {
+        title: 'Pages',
+        href: `/${locale.value}/admin/pages`,
+        icon: Book,
+        isDisplayed: isAdmin.value,
     },
 ]);
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\PostStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class StorePostRequest extends FormRequest
 {
@@ -11,7 +13,14 @@ class StorePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
+    }
+
+    protected function getRedirectUrl()
+    {
+        return route('admin.posts.index', [
+            'locale' => app()->getLocale(),
+        ], false);
     }
 
     /**
@@ -22,7 +31,12 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'language_id' => ['required', 'exists:languages,id'],
+            'title' => ['required', 'string'],
+            'slug' => ['required', 'string'],
+            'content_md' => ['required', 'string'],
+            'status' => ['required', new Enum(PostStatus::class)],
+            'published_at' => ['required', 'date'],
         ];
     }
 }

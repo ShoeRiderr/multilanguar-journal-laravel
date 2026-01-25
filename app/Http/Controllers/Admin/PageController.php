@@ -1,19 +1,28 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\StorePageRequest;
 use App\Http\Requests\UpdatePageRequest;
 use App\Models\Page;
+use App\Http\Resources\PageResource;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class PageController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $languageId = $request->header('Language-ID', 'en');
+
+        return Inertia::render('pages/Index', [
+            'pages' => PageResource::collection(Page::where('language_id', $languageId)->paginate(10)),
+        ]);
     }
 
     /**
@@ -21,7 +30,11 @@ class PageController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('pages/Create', [
+            'can' => [
+                'create' => Auth::user()?->can('create', Page::class),
+            ],
+        ]);
     }
 
     /**
@@ -33,19 +46,16 @@ class PageController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Page $page)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Page $page)
     {
-        //
+        return Inertia::render('pages/Edit', [
+            'can' => [
+                'edit' => Auth::user()?->can('edit', Page::class),
+            ],
+            'page' => $page,
+        ]);
     }
 
     /**

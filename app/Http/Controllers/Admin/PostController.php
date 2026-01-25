@@ -1,19 +1,28 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $languageId = $request->header('Language-ID', 'en');
+
+        return Inertia::render('posts/Index', [
+            'posts' => PostResource::collection(Post::where('language_id', $languageId)->paginate(10)),
+        ]);
     }
 
     /**
@@ -21,7 +30,11 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('posts/Create', [
+            'can' => [
+                'create' => Auth::user()?->can('create', Post::class),
+            ],
+        ]);
     }
 
     /**
@@ -29,15 +42,7 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Post $post)
-    {
-        //
+        dd($request->all());
     }
 
     /**
@@ -45,7 +50,12 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return Inertia::render('posts/Edit', [
+            'can' => [
+                'edit' => Auth::user()?->can('edit', Post::class),
+            ],
+            'post' => $post,
+        ]);
     }
 
     /**
