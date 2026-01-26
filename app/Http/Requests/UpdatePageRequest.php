@@ -11,7 +11,9 @@ class UpdatePageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = $this->user();
+        $page = $this->route('page');
+        return $user && $page && $user->can('update', $page);
     }
 
     /**
@@ -21,8 +23,14 @@ class UpdatePageRequest extends FormRequest
      */
     public function rules(): array
     {
+        $page = $this->route('page');
+        $currentId = optional($page)->id;
+
         return [
-            //
+            'language_id' => ['required', 'exists:languages,id'],
+            'key' => ['required', 'string', 'unique:pages,key,' . $currentId],
+            'content_md' => ['required', 'string'],
+            'is_active' => ['required', 'boolean'],
         ];
     }
 }

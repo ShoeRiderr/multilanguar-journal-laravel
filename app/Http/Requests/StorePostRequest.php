@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\PostStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
+use App\Models\Post;
 
 class StorePostRequest extends FormRequest
 {
@@ -13,7 +14,8 @@ class StorePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = $this->user();
+        return $user && $user->can('create', Post::class);
     }
 
     protected function getRedirectUrl()
@@ -33,7 +35,7 @@ class StorePostRequest extends FormRequest
         return [
             'language_id' => ['required', 'exists:languages,id'],
             'title' => ['required', 'string'],
-            'slug' => ['required', 'string'],
+            'slug' => ['required', 'string', 'unique:posts,slug'],
             'content_md' => ['required', 'string'],
             'status' => ['required', new Enum(PostStatus::class)],
             'published_at' => ['required', 'date'],

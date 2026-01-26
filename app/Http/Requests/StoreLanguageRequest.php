@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Language;
 
 class StoreLanguageRequest extends FormRequest
 {
@@ -11,7 +12,8 @@ class StoreLanguageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = $this->user();
+        return $user && $user->can('create', Language::class);
     }
 
     /**
@@ -22,7 +24,11 @@ class StoreLanguageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'code' => ['required', 'string', 'unique:languages,code'],
+            'name' => ['required', 'string'],
+            'native_name' => ['required', 'string'],
+            'is_active' => ['boolean'],
+            'is_default' => ['boolean'],
         ];
     }
 }

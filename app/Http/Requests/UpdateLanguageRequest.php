@@ -11,7 +11,9 @@ class UpdateLanguageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = $this->user();
+        $language = $this->route('language');
+        return $user && $language && $user->can('update', $language);
     }
 
     /**
@@ -22,7 +24,11 @@ class UpdateLanguageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'code' => ['required', 'string', 'unique:languages,code,' . $this->route('language')->id],
+            'name' => ['required', 'string'],
+            'native_name' => ['required', 'string'],
+            'is_active' => ['boolean'],
+            'is_default' => ['boolean'],
         ];
     }
 }

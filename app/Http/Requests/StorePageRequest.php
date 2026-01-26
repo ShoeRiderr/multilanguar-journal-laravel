@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Page;
 
 class StorePageRequest extends FormRequest
 {
@@ -11,7 +12,8 @@ class StorePageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = $this->user();
+        return $user && $user->can('create', Page::class);
     }
 
     /**
@@ -22,7 +24,10 @@ class StorePageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'language_id' => ['required', 'exists:languages,id'],
+            'key' => ['required', 'string', 'unique:pages,key'],
+            'content_md' => ['required', 'string'],
+            'is_active' => ['required', 'boolean'],
         ];
     }
 }

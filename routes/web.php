@@ -17,6 +17,7 @@ Route::middleware(['set.language'])->prefix('{locale}')->where(['locale' => '[a-
 
     Route::middleware(['auth', 'verified'])
         ->prefix('admin')
+        ->name('admin.')
         ->group(function () {
             Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class)
                 ->except(['show']);

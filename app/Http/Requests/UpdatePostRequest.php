@@ -13,7 +13,9 @@ class UpdatePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->authorize('update', $this->route('post'));
+        $user = $this->user();
+        $post = $this->route('post');
+        return $user && $post && $user->can('update', $post);
     }
 
     /**
@@ -24,10 +26,9 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'exists:posts,id'],
             'language_id' => ['required', 'exists:languages,id'],
             'title' => ['required', 'string'],
-            'slug' => ['required', 'string'],
+            'slug' => ['required', 'string', 'unique:posts,slug,' . $this->route('post')->id],
             'content_md' => ['required', 'string'],
             'status' => ['required', new Enum(PostStatus::class)],
             'published_at' => ['required', 'date'],
