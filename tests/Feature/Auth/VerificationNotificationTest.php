@@ -6,24 +6,18 @@ use Illuminate\Support\Facades\Notification;
 
 test('sends verification notification', function () {
     Notification::fake();
-
     $user = User::factory()->unverified()->create();
-
     $this->actingAs($user)
-        ->post(route('verification.send'))
-        ->assertRedirect(route('home'));
-
+        ->post(route('verification.send', ['locale' => app()->getLocale()]))
+        ->assertRedirect(route('home', ['locale' => app()->getLocale()]));
     Notification::assertSentTo($user, VerifyEmail::class);
 });
 
 test('does not send verification notification if email is verified', function () {
     Notification::fake();
-
     $user = User::factory()->create();
-
     $this->actingAs($user)
-        ->post(route('verification.send'))
-        ->assertRedirect(route('dashboard', absolute: false));
-
+        ->post(route('verification.send', ['locale' => app()->getLocale()]))
+        ->assertRedirect(route('dashboard', ['locale' => app()->getLocale()], false));
     Notification::assertNothingSent();
 });

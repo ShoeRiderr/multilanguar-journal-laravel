@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use Laravel\Fortify\Contracts\LogoutResponse as LogoutResponseContract;
+use App\Http\Responses\LogoutResponse;
+use Laravel\Fortify\Contracts\EmailVerificationNotificationSentResponse as EmailVerificationNotificationSentResponseContract;
+use App\Http\Responses\EmailVerificationNotificationSentResponse;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Override Fortify's LogoutResponse binding
+        $this->app->singleton(LogoutResponseContract::class, LogoutResponse::class);
+        // Override Fortify's EmailVerificationNotificationSentResponse binding
+        $this->app->singleton(EmailVerificationNotificationSentResponseContract::class, EmailVerificationNotificationSentResponse::class);
     }
 
     /**

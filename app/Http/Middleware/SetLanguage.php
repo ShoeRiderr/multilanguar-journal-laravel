@@ -20,13 +20,12 @@ class SetLanguage
             'locale',
             env(
                 'APP_LOCALE',
-                Language::where('is_default', true)->first()->code ?? 'en'
+                Language::where('is_default', true)->first()->code ?? app()->getLocale()
             )
         );
         
         $language = Language::where('code', $locale)->firstOrFail();
         $request->headers->set('Language-ID', $language->id);
-        
         
         return $next($request);
     }

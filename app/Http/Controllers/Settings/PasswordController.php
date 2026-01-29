@@ -27,6 +27,7 @@ class PasswordController extends Controller
             'password' => $request->password,
         ]);
 
-        return back();
+        $locale = $request->route('locale');
+        return to_route('user-password.edit', ['locale' => $locale]);
     }
 }
