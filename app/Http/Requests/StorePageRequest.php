@@ -12,8 +12,7 @@ class StorePageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = $this->user();
-        return $user && $user->can('create', Page::class);
+        return $this->user() && $this->user()->can('create', Page::class);
     }
 
     /**
@@ -24,9 +23,11 @@ class StorePageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'language_id' => ['required', 'exists:languages,id'],
-            'key' => ['required', 'string', 'unique:pages,key'],
-            'content_md' => ['required', 'string'],
+            'translations' => ['required', 'array', 'min:1'],
+            'translations.*.language_id' => ['required', 'exists:languages,id'],
+            'translations.*.title' => ['required', 'string'],
+            'translations.*.slug' => ['required', 'string'],
+            'translations.*.content_md' => ['nullable', 'string'],
             'is_active' => ['required', 'boolean'],
         ];
     }

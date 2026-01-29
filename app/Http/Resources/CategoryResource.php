@@ -14,7 +14,7 @@ class CategoryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $languageId = $request->header('Language-ID', 'en');
+        $languageId = $request->header('Language-ID', app()->getLocale());
         $translation = $this->categoryTranslations()->where('language_id', $languageId)->first();
 
         return [

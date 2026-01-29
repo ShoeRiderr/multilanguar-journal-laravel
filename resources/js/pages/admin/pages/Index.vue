@@ -8,10 +8,11 @@ import { type BreadcrumbItem } from '@/types';
 
 interface Pages {
     id: number;
-    language_id: number; 
-    key: string
-    content_md: string; 
-    is_active: boolean
+    language_id: number;
+    title: string;
+    slug: string;
+    content_md: string;
+    is_active: boolean;
 }
 
 interface PaginationLink {
@@ -92,7 +93,7 @@ const paginationLinks = computed(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
     <div>
       <div v-for="page in props.pages.data" :key="page.id">
-        {{ page.key }}
+        {{ page.title }}
       </div>
       <pagination :links="paginationLinks" />
     </div>

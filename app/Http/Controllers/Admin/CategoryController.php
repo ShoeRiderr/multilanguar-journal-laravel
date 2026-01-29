@@ -27,6 +27,9 @@ class CategoryController extends Controller
      */
     public function index(): Response
     {
+        if (request()->user()->cannot('viewAny', Category::class)) {
+            abort(403);
+        }
         return Inertia::render('admin/categories/Index', [
             'categories' => CategoryResource::collection($this->categoryService->getCategories()),
         ]);
@@ -37,6 +40,9 @@ class CategoryController extends Controller
      */
     public function create(): Response
     {
+        if (request()->user()->cannot('create', Category::class)) {
+            abort(403);
+        }
         return Inertia::render('admin/categories/Create', [
             'can' => [
                 'create' => Auth::user()?->can('create', Category::class),
@@ -47,21 +53,23 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCategoryRequest $request): RedirectResponse
+    public function store(StoreCategoryRequest $request, string|null $locale): RedirectResponse
     {
         $this->categoryService->createCategory($request->validated());
 
         return redirect()->route('admin.categories.index', [
-            'locale' => app()->getLocale(),
+            'locale' => $locale ?? app()->getLocale(),
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category): Response
+    public function edit(string|null $locale, Category $category): Response
     {
-        
+        if (request()->user()->cannot('update', $category)) {
+            abort(403);
+        }
         return Inertia::render('admin/categories/Edit', [
             'can' => [
                 'edit' => Auth::user()?->can('edit', Category::class),
@@ -73,24 +81,27 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
+    public function update(UpdateCategoryRequest $request, string|null $locale, Category $category): RedirectResponse
     {
         $this->categoryService->updateCategory($category, $request->validated());
 
         return redirect()->route('admin.categories.index', [
-            'locale' => app()->getLocale(),
+            'locale' => $locale ?? app()->getLocale(),
         ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category): RedirectResponse
+    public function destroy(string|null $locale, Category $category): RedirectResponse
     {
+        if (request()->user()->cannot('delete', $category)) {
+            abort(403);
+        }
         $this->categoryService->deleteCategory($category);
 
         return redirect()->route('admin.categories.index', [
-            'locale' => app()->getLocale(),
+            'locale' => $locale ?? app()->getLocale(),
         ]);
     }
 }

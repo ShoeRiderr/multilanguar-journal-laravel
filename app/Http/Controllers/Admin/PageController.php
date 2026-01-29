@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\PageService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Response;
+use Illuminate\Support\Facades\Gate;
 
 class PageController extends Controller
 {
@@ -28,7 +29,10 @@ class PageController extends Controller
      */
     public function index(Request $request): Response
     {
-        $languageId = $request->header('Language-ID', 'en');
+        if ($request->user()->cannot('viewAny', Page::class)) {
+            abort(403);
+        }
+        $languageId = $request->header('Language-ID', app()->getLocale());
 
         return Inertia::render('admin/pages/Index', [
             'pages' => PageResource::collection($this->pageService->getPagesByLanguage($languageId)),
@@ -40,6 +44,9 @@ class PageController extends Controller
      */
     public function create(): Response
     {
+        if (request()->user()->cannot('create', Page::class)) {
+            abort(403);
+        }
         return Inertia::render('admin/pages/Create', [
             'can' => [
                 'create' => Auth::user()?->can('create', Page::class),
@@ -50,23 +57,26 @@ class PageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePageRequest $request): RedirectResponse
+    public function store(StorePageRequest $request, string $locale): RedirectResponse
     {
         $this->pageService->createPage($request->validated());
 
         return redirect()->route('admin.pages.index', [
-            'locale' => app()->getLocale(),
+            'locale' => $locale ?? app()->getLocale(),
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Page $page): Response
+    public function edit(string $locale, Page $page): Response
     {
+        if (request()->user()->cannot('update', $page)) {
+            abort(403);
+        }
         return Inertia::render('admin/pages/Edit', [
             'can' => [
-                'edit' => Auth::user()?->can('edit', Page::class),
+                'edit' => Auth::user()?->can('update', $page),
             ],
             'page' => $page,
         ]);
@@ -75,24 +85,27 @@ class PageController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePageRequest $request, Page $page): RedirectResponse
+    public function update(UpdatePageRequest $request, string $locale, Page $page): RedirectResponse
     {
         $this->pageService->updatePage($page, $request->validated());
 
         return redirect()->route('admin.pages.index', [
-            'locale' => app()->getLocale(),
+            'locale' => $locale ?? app()->getLocale(),
         ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Page $page): RedirectResponse
+    public function destroy(string $locale, Page $page): RedirectResponse
     {
+        if (request()->user()->cannot('delete', $page)) {
+            abort(403);
+        }
         $this->pageService->deletePage($page);
 
         return redirect()->route('admin.pages.index', [
-            'locale' => app()->getLocale(),
+            'locale' => $locale ?? app()->getLocale(),
         ]);
     }
 }

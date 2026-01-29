@@ -49,11 +49,12 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'role' => UserRole::class,
         ];
     }
 
     public function isAdmin(): bool
     {
-        return $this->role === UserRole::ADMIN->value;
+        return $this->role->value === UserRole::ADMIN->value;
     }
 }

@@ -28,6 +28,9 @@ class PostController extends Controller
      */
     public function index(Request $request): Response
     {
+        if (request()->user()->cannot('viewAny', Post::class)) {
+            abort(403);
+        }
         $languageId = $request->header('Language-ID', 'en');
 
         return Inertia::render('admin/posts/Index', [
@@ -40,6 +43,9 @@ class PostController extends Controller
      */
     public function create(): Response
     {
+        if (request()->user()->cannot('create', Post::class)) {
+            abort(403);
+        }
         return Inertia::render('admin/posts/Create', [
             'can' => [
                 'create' => Auth::user()?->can('create', Post::class),
@@ -64,9 +70,12 @@ class PostController extends Controller
      */
     public function edit(Post $post): Response
     {
+        if (request()->user()->cannot('update', $post)) {
+            abort(403);
+        }
         return Inertia::render('admin/posts/Edit', [
             'can' => [
-                'edit' => Auth::user()?->can('edit', Post::class),
+                'edit' => Auth::user()?->can('update', $post),
             ],
             'post' => $post,
         ]);
@@ -89,6 +98,9 @@ class PostController extends Controller
      */
     public function destroy(Post $post): RedirectResponse
     {
+        if (request()->user()->cannot('delete', $post)) {
+            abort(403);
+        }
         $this->postService->deletePost($post);
 
         return redirect()->route('admin.posts.index', [

@@ -15,11 +15,15 @@ class PageResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $languageId = $request->header('Language-ID', app()->getLocale());
+        $translation = $this->pageTranslations()->where('language_id', $languageId)->first();
+
         return [
             'id' => $this->id,
-            'language_id' => $this->language_id,
-            'key' => $this->key,
-            'content_md' => Str::markdown($this->content_md, [
+            'language_id' => $translation->language_id,
+            'title' => $translation->title,
+            'slug' => $translation->slug,
+            'content_md' => Str::markdown($translation->content_md ?? '', [
                 'html_input' => 'strip',
                 'allow_unsafe_links' => false,
             ]),

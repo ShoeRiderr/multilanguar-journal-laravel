@@ -1,20 +1,17 @@
-
-use Tests\TestCase;
+<?php
 
 use App\Models\User;
 use App\Models\Category;
-use App\Models\CategoryTranslation;
 use App\Models\Language;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(TestCase::class)->in(__DIR__);
 uses(RefreshDatabase::class);
 
 test('can create category with parent', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $locale = app()->getLocale();
     $this->actingAs($admin);
-    $languages = Language::factory()->count(2)->create();
+    $languages = Language::all();
     $parent = Category::factory()->create();
     $translations = [];
     foreach ($languages as $lang) {
@@ -29,7 +26,7 @@ test('can create category with parent', function () {
         'translations' => $translations,
     ]);
     $response->assertRedirect();
-    $category = Category::latest()->first();
+    $category = Category::all()->last();
     $this->assertEquals($parent->id, $category->parent_id);
 });
 
@@ -118,7 +115,7 @@ test('validates store request', function () {
     ]);
 
     // Invalid parent_id
-    $languages = Language::factory()->count(2)->create();
+    $languages = Language::all();
     $category = Category::factory()->create();
     $translations = [];
     foreach ($languages as $lang) {
@@ -147,7 +144,7 @@ test('validates store request', function () {
         'translations' => $translations,
     ]);
     $response->assertRedirect();
-    $category = Category::latest()->first();
+    $category = Category::all()->last();
     foreach ($languages as $lang) {
         $this->assertDatabaseHas('category_translations', [
             'category_id' => $category->id,
@@ -162,7 +159,7 @@ test('validates update request', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $locale = app()->getLocale();
     $this->actingAs($admin);
-    $languages = Language::factory()->count(2)->create();
+    $languages = Language::all();
     $category = Category::factory()->create();
 
     // Missing required fields
@@ -211,7 +208,7 @@ test('validates update request', function () {
 test('admin can delete a category', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $locale = app()->getLocale();
-    $this->actingAs($admin);
     $category = Category::factory()->create();
-    $this->delete("/$locale/admin/categories/{$category->id}")->assertRedirect();
+    $this->actingAs($admin)
+        ->delete(route('admin.categories.destroy', ['category' => $category, 'locale' => $locale]))->assertRedirect();
 });

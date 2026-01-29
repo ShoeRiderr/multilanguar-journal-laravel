@@ -27,6 +27,9 @@ class LanguageController extends Controller
      */
     public function index(): Response
     {
+        if (request()->user()->cannot('viewAny', Language::class)) {
+            abort(403);
+        }
         return Inertia::render('admin/languages/Index', [
             'languages' => LanguageResource::collection($this->languageService->getLanguages()),
         ]);
@@ -37,6 +40,9 @@ class LanguageController extends Controller
      */
     public function create(): Response
     {
+        if (request()->user()->cannot('create', Language::class)) {
+            abort(403);
+        }
         return Inertia::render('admin/languages/Create', [
             'can' => [
                 'create' => Auth::user()?->can('create', Language::class),
@@ -61,6 +67,9 @@ class LanguageController extends Controller
      */
     public function edit(Language $language): Response
     {
+        if (request()->user()->cannot('update', $language)) {
+            abort(403);
+        }
         return Inertia::render('admin/languages/Edit', [
             'can' => [
                 'edit' => Auth::user()?->can('edit', Language::class),
@@ -86,6 +95,9 @@ class LanguageController extends Controller
      */
     public function destroy(Language $language): RedirectResponse
     {
+        if (request()->user()->cannot('delete', $language)) {
+            abort(403);
+        }
         $this->languageService->deleteLanguage($language);
 
         return redirect()->route('admin.languages.index', [

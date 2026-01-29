@@ -5,6 +5,8 @@ namespace App\Policies;
 use App\Models\Language;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use App\Helpers\Policies\AdminHelper;
+use App\UserRole;
 
 class LanguagePolicy
 {
@@ -20,6 +22,9 @@ class LanguagePolicy
      */
     public function viewAny(User $user): bool
     {
+        if (AdminHelper::isAdminRoute()) {
+            return $user->role === UserRole::ADMIN;
+        }
         return true;
     }
 
@@ -28,6 +33,34 @@ class LanguagePolicy
      */
     public function view(User $user, Language $language): bool
     {
+        if (AdminHelper::isAdminRoute()) {
+            return $user->role === UserRole::ADMIN;
+        }
         return true;
+    }
+
+    public function create(User $user): bool
+    {
+        return false;
+    }
+
+    public function update(User $user, Language $language): bool
+    {
+        return false;
+    }
+
+    public function delete(User $user, Language $language): bool
+    {
+        return false;
+    }
+
+    public function restore(User $user, Language $language): bool
+    {
+        return false;
+    }
+
+    public function forceDelete(User $user, Language $language): bool
+    {
+        return false;
     }
 }

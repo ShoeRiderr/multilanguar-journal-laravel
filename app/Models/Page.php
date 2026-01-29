@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Page extends Model
 {
@@ -12,14 +12,11 @@ class Page extends Model
     use HasFactory;
 
     public $fillable = [
-        'language_id',
-        'key',
-        'content_md',
         'is_active',
     ];
 
-    public function language(): BelongsTo
+    public function pageTranslations(): HasMany
     {
-        return $this->belongsTo(Language::class);
+        return $this->hasMany(PageTranslation::class);
     }
 }

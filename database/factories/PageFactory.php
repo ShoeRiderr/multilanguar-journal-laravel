@@ -2,7 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\PageTranslation;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\Sequence;
+use App\Models\Page;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Page>
@@ -17,10 +20,33 @@ class PageFactory extends Factory
     public function definition(): array
     {
         return [
-            'language_id' => $this->faker->randomElement([1, 2, 3]),
-            'key' => $this->faker->word(),
-            'content_md' => $this->faker->sentences(10, true),
-            'is_active' => $this->faker->boolean(),
+            'is_active' => $this->faker->boolean(80),
         ];
+    }
+
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Page $page) {
+            $page->pageTranslations()->saveMany(
+                PageTranslation::factory()
+                    ->count(3)
+                    ->state(new Sequence(
+                        [
+                            'language_id' => 1,
+                            'page_id' => $page->id
+                        ],
+                        [
+                            'language_id' => 2,
+                            'page_id' => $page->id
+                        ],
+                        [
+                            'language_id' => 3,
+                            'page_id' => $page->id
+                        ],
+                    ))
+                    ->make()
+            );
+        });
     }
 }

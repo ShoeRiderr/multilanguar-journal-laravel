@@ -13,7 +13,7 @@ class UpdatePageRequest extends FormRequest
     {
         $user = $this->user();
         $page = $this->route('page');
-        return $user && $page && $user->can('update', $page);
+        return ($user && $page && $user->can('update', $page));
     }
 
     /**
@@ -27,9 +27,11 @@ class UpdatePageRequest extends FormRequest
         $currentId = optional($page)->id;
 
         return [
-            'language_id' => ['required', 'exists:languages,id'],
-            'key' => ['required', 'string', 'unique:pages,key,' . $currentId],
-            'content_md' => ['required', 'string'],
+            'translations' => ['required', 'array', 'min:1'],
+            'translations.*.language_id' => ['required', 'exists:languages,id'],
+            'translations.*.title' => ['required', 'string'],
+            'translations.*.slug' => ['required', 'string'],
+            'translations.*.content_md' => ['nullable', 'string'],
             'is_active' => ['required', 'boolean'],
         ];
     }
