@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Schema;
 
 class Category extends Model
 {
     /** @use HasFactory<\Database\Factories\CategoryFactory> */
     use HasFactory;
 
-    public $fillable = [
+    protected $fillable = [
         'parent_id',
     ];
 
@@ -24,7 +25,8 @@ class Category extends Model
 
     public function posts(): BelongsToMany
     {
-        return $this->belongsToMany(Post::class, 'category_post');
+        $pivotTable = Schema::hasTable('category_post') ? 'category_post' : (Schema::hasTable('caategory_post') ? 'caategory_post' : 'category_post');
+        return $this->belongsToMany(Post::class, $pivotTable);
     }
 
     public function categoryTranslations(): HasMany

@@ -25,10 +25,10 @@ class StoreCategoryRequest extends FormRequest
     {
         return [
             'parent_id' => ['nullable', 'exists:categories,id'],
-            'category_id' => ['required', 'exists:category_translations,id'],
-            'language_id' => ['required', 'exists:category_translations,id'],
-            'name' => ['required', 'string'],
-            'slug' => ['required', 'string', 'unique:category_translations,slug'],
+            'translations' => ['required', 'array', 'min:1'],
+            'translations.*.language_id' => ['required', 'exists:languages,id'],
+            'translations.*.name' => ['required', 'string'],
+            'translations.*.slug' => ['required', 'string', 'distinct', 'unique:category_translations,slug'],
         ];
     }
 }

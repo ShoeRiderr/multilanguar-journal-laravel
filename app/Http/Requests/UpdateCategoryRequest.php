@@ -32,15 +32,14 @@ class UpdateCategoryRequest extends FormRequest
                 'nullable',
                 Rule::exists('categories', 'id')->where(function ($query) use ($currentId) {
                     if ($currentId) {
-                        // exclude the current category id from the existence check
                         $query->where('id', '<>', $currentId);
                     }
                 }),
             ],
-            'category_id' => ['required', 'exists:category_translations,id'],
-            'language_id' => ['required', 'exists:category_translations,id'],
-            'name' => ['required', 'string'],
-            'slug' => ['required', 'string', 'unique:category_translations,slug,' . $currentId],
+            'translations' => ['required', 'array', 'min:1'],
+            'translations.*.language_id' => ['required', 'exists:languages,id'],
+            'translations.*.name' => ['required', 'string'],
+            'translations.*.slug' => ['required', 'string', 'distinct', 'unique:category_translations,slug,' . $currentId . ',category_id'],
         ];
     }
 }
