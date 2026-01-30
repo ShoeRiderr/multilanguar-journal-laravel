@@ -53,7 +53,7 @@ class LanguageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreLanguageRequest $request): RedirectResponse
+    public function store(StoreLanguageRequest $request, string|null $locale): RedirectResponse
     {
         $this->languageService->createLanguage($request->validated());
 
@@ -65,14 +65,14 @@ class LanguageController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Language $language): Response
+    public function edit(string|null $locale, Language $language): Response
     {
         if (request()->user()->cannot('update', $language)) {
             abort(403);
         }
         return Inertia::render('admin/languages/Edit', [
             'can' => [
-                'edit' => Auth::user()?->can('edit', Language::class),
+                'edit' => Auth::user()?->can('update', Language::class),
             ],
             'language' => $language,
         ]);
@@ -81,7 +81,7 @@ class LanguageController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateLanguageRequest $request, Language $language): RedirectResponse
+    public function update(UpdateLanguageRequest $request, string|null $locale, Language $language): RedirectResponse
     {
         $this->languageService->updateLanguage($language, $request->validated());
 
@@ -93,7 +93,7 @@ class LanguageController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Language $language): RedirectResponse
+    public function destroy(string|null $locale, Language $language): RedirectResponse
     {
         if (request()->user()->cannot('delete', $language)) {
             abort(403);
@@ -101,7 +101,7 @@ class LanguageController extends Controller
         $this->languageService->deleteLanguage($language);
 
         return redirect()->route('admin.languages.index', [
-            'locale' => app()->getLocale(),
+            'locale' => $locale ?? app()->getLocale(),
         ]);
     }
 }

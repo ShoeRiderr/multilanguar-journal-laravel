@@ -31,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        \App\Models\Post::observe(\App\Observers\PostObserver::class);
     }
 
     protected function configureDefaults(): void

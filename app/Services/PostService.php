@@ -8,7 +8,9 @@ class PostService
 {
     public function getPostsByLanguage($languageId): \Illuminate\Pagination\LengthAwarePaginator
     {
-        return Post::where('language_id', $languageId)->paginate(10);
+        return Post::with(['categories', 'postView'])
+            ->where('language_id', $languageId)
+            ->paginate(10);
     }
 
     public function createPost(array $data): Post

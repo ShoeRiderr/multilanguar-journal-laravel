@@ -26,6 +26,8 @@ class PostResource extends JsonResource
             ]),
             'status' => $this->status,
             'published_at' => $this->published_at,
+            'categories' => \App\Http\Resources\CategoryResource::collection($this->whenLoaded('categories')),
+            'post_view' => $this->whenLoaded('postView'),
         ];
     }
 }

@@ -32,9 +32,9 @@ class PostController extends Controller
             abort(403);
         }
         $languageId = $request->header('Language-ID', 'en');
-
+        $posts = $this->postService->getPostsByLanguage($languageId);
         return Inertia::render('admin/posts/Index', [
-            'posts' => PostResource::collection($this->postService->getPostsByLanguage($languageId)),
+            'posts' => PostResource::collection($posts),
         ]);
     }
 
@@ -68,7 +68,7 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post): Response
+    public function edit(string $locale, Post $post): Response
     {
         if (request()->user()->cannot('update', $post)) {
             abort(403);
@@ -84,7 +84,7 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, Post $post): RedirectResponse
+    public function update(UpdatePostRequest $request, string $locale, Post $post): RedirectResponse
     {
         $this->postService->updatePost($post, $request->validated());
 
@@ -96,7 +96,7 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post): RedirectResponse
+    public function destroy(string $locale, Post $post): RedirectResponse
     {
         if (request()->user()->cannot('delete', $post)) {
             abort(403);

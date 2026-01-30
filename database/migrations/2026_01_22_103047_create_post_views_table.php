@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('post_id')->constrained('posts')->onDelete('cascade');
             $table->unsignedBigInteger('view_count')->default(0);
             $table->date('last_viewed_at')->nullable();
-            $table->timestamps();
         });
     }
 

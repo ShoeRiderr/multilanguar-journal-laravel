@@ -11,10 +11,14 @@ Route::middleware(['set.language'])->prefix('{locale}')->where(['locale' => '[a-
         ]);
     })->name('home');
 
+    Route::get('posts/{post}/view', [\App\Http\Controllers\PostViewController::class, 'view'])->name('posts.view');
+
     Route::get('dashboard', function () {
         return Inertia::render('Dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
 
+    Route::resource('posts', App\Http\Controllers\PostController::class)
+        ->only(['show', 'index']);
     Route::middleware(['auth', 'verified'])
         ->prefix('admin')
         ->name('admin.')

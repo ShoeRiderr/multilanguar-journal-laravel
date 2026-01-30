@@ -4,6 +4,9 @@ namespace Database\Factories;
 
 use App\PostStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Post;
+use App\Models\PostView;
+use App\Models\Category;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Post>
@@ -29,5 +32,21 @@ class PostFactory extends Factory
             ]),
             'published_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
+    }
+
+
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Post $post) {
+            $post->postView()->save(
+                PostView::factory()
+                    ->make()
+            );
+
+            $post->categories()->attach(
+                Category::inRandomOrder()->take(rand(1, 3))->pluck('id')
+            );
+        });
     }
 }
