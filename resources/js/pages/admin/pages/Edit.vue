@@ -12,7 +12,6 @@ interface Props {
     data: PageForm & { id: number };
 }
 
-
 const props = defineProps<Props>();
 const page = usePage();
 const locale = computed(() => page.props.locale as string);
@@ -40,7 +39,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 <template>
     <Head title="Pages" />
 
-        <AppLayout :breadcrumbs="breadcrumbs">
-            <Form :model="props.data" :onSubmit="handleSubmit" submitLabel="Update Page" />
-        </AppLayout>
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <Form :model="props.data" :onSubmit="handleSubmit" submitLabel="Update Page" />
+    </AppLayout>
 </template>

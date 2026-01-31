@@ -107,6 +107,6 @@ const locale = computed(() => page.props.locale as string);
                     >Log in</TextLink
                 >
             </div>
-        </form>
+        </Form>
     </AuthBase>
 </template>

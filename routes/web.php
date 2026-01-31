@@ -14,6 +14,10 @@ Route::middleware(['set.language'])->prefix('{locale}')->where(['locale' => '[a-
     Route::get('posts/{post}/view', [\App\Http\Controllers\PostViewController::class, 'view'])->name('posts.view');
 
     Route::get('dashboard', function () {
+        $user = auth()->user();
+        if (!$user || !$user->isAdmin()) {
+            return redirect()->route('home', ['locale' => app()->getLocale()]);
+        }
         return Inertia::render('Dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
 

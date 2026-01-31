@@ -10,13 +10,23 @@ test('login screen can be rendered', function () {
 });
 
 test('users can authenticate using the login screen', function () {
-    $user = User::factory()->create();
+    $admin = User::factory()->create(['role' => \App\UserRole::ADMIN]);
+    $response = $this->post(route('login.store', ['locale' => app()->getLocale()]), [
+        'email' => $admin->email,
+        'password' => 'password',
+    ]);
+    $this->assertAuthenticated();
+    $response->assertRedirect(route('dashboard', ['locale' => app()->getLocale()], false));
+});
+
+test('user role is redirected to welcome page after login', function () {
+    $user = User::factory()->create(['role' => \App\UserRole::USER]);
     $response = $this->post(route('login.store', ['locale' => app()->getLocale()]), [
         'email' => $user->email,
         'password' => 'password',
     ]);
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', ['locale' => app()->getLocale()], false));
+    $response->assertRedirect(route('home', ['locale' => app()->getLocale()], false));
 });
 
 test('users with two factor enabled are redirected to two factor challenge', function () {

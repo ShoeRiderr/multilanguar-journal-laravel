@@ -22,18 +22,16 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                // Spróbuj pobrać locale z trasy (prefixu), w przeciwnym razie użyj app()->getLocale()
+                $user = Auth::guard($guard)->user();
                 $locale = $request->route('locale') ?? app()->getLocale();
-
-                // docelowa, zabezpieczona trasa (fallback)
-                $fallback = route('dashboard', ['locale' => $locale]);
-
-                // Jeśli to żądanie Inertia, użyj Inertia::location żeby klient SPA prawidłowo przekierował
+                if ($user && $user->isAdmin()) {
+                    $fallback = route('dashboard', ['locale' => $locale]);
+                } else {
+                    $fallback = route('home', ['locale' => $locale]);
+                }
                 if ($request->header('X-Inertia')) {
                     return Inertia::location($fallback);
                 }
-
-                // Użyj intended jeśli była zapamiętana intencja, inaczej fallback z locale
                 return redirect()->intended($fallback);
             }
         }
