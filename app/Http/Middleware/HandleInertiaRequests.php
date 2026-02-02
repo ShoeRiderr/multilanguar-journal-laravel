@@ -36,15 +36,20 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        return [
-            ...parent::share($request),
+        $locale = $request->route('locale', app()->getLocale());
+        $file = lang_path($locale . '.json');
+        $translations = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
+
+        return array_merge(parent::share($request), [
             'name' => config('app.name'),
-            'locale' => $request->route('locale', 'en'),
+            'locale' => $locale,
+            'locales' => config('app.available_locales'),
             'languages' => Language::all(['id', 'code', 'name'])->toArray(),
+            'translations' => $translations,
             'auth' => [
                 'user' => $request->user(),
             ],
-            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-        ];
+            'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+        ]);
     }
 }

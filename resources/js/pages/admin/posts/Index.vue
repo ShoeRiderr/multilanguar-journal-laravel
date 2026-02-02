@@ -5,32 +5,7 @@ import { computed } from 'vue';
 import Pagination from '@/shared/Pagination.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-
-interface Post {
-    id: number;
-    language_id: number;
-    title: string;
-    slug: string;
-    content_md: string;
-    status: string;
-    published_at: Date | null;
-}
-
-interface PaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-}
-
-interface PaginationMeta {
-    current_page: number;
-    from: number;
-    last_page: number;
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-}
+import { type Post, PaginationLink, PaginationMeta } from '@/types/index';
 
 interface Props {
     posts: {

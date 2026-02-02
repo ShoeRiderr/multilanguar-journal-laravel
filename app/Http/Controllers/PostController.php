@@ -23,9 +23,6 @@ class PostController extends Controller
      */
     public function index(Request $request): Response
     {
-        if (request()->user()->cannot('viewAny', Post::class)) {
-            abort(403);
-        }
         $languageId = $request->header('Language-ID', 'en');
         $posts = $this->postService->getPostsByLanguage($languageId);
         return Inertia::render('posts/Index', [
@@ -38,9 +35,6 @@ class PostController extends Controller
      */
     public function show(string $locale, Post $post): Response
     {
-        if (request()->user()->cannot('view', $post)) {
-            abort(403);
-        }
         $post->load(['categories', 'postView']);
         return Inertia::render('posts/Show', [
             'post' => new PostResource($post),

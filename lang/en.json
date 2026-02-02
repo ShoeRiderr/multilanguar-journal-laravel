@@ -1,0 +1,12 @@
+{
+  "sidebar": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "posts": "Posts",
+    "categories": "Categories",
+    "languages": "Languages",
+    "pages": "Pages",
+    "settings": "Settings",
+    "logout": "Log out"
+  }
+}

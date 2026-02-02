@@ -1,0 +1,12 @@
+{
+  "sidebar": {
+    "home": "Strona główna",
+    "dashboard": "Panel główny",
+    "posts": "Posty",
+    "categories": "Kategorie",
+    "languages": "Języki",
+    "pages": "Strony",
+    "settings": "Ustawienia",
+    "logout": "Wyloguj się"
+  }
+}

@@ -5,33 +5,7 @@ import { computed } from 'vue';
 import Pagination from '@/shared/Pagination.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-
-import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
-
-interface Category {
-    id: number;
-    parent_id: number | null;
-    name: string | null;
-    slug: string | null;
-    created_at: string;
-    updated_at: string;
-}
-
-interface PaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-}
-
-interface PaginationMeta {
-    current_page: number;
-    from: number;
-    last_page: number;
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-}
+import { type Category, PaginationLink, PaginationMeta } from '@/types/index';
 
 interface Props {
     categories: {

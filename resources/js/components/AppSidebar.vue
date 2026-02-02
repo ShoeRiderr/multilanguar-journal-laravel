@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid, Tags, Book,  } from 'lucide-vue-next';
+import { LayoutGrid, Tags, Book } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 import NavFooter from '@/components/NavFooter.vue';

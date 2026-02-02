@@ -1,0 +1,12 @@
+{
+  "sidebar": {
+    "home": "Startseite",
+    "dashboard": "Übersicht",
+    "posts": "Beiträge",
+    "categories": "Kategorien",
+    "languages": "Sprachen",
+    "pages": "Seiten",
+    "settings": "Einstellungen",
+    "logout": "Abmelden"
+  }
+}

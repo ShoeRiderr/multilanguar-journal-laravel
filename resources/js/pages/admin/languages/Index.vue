@@ -5,31 +5,7 @@ import { computed } from 'vue';
 import Pagination from '@/shared/Pagination.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-
-interface Language {
-    id: number;
-    code: string;
-    name: string;
-    native_name: string;
-    is_active: boolean;
-    is_default: boolean;
-}
-
-interface PaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-}
-
-interface PaginationMeta {
-    current_page: number;
-    from: number;
-    last_page: number;
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-}
+import { type Language, PaginationLink, PaginationMeta } from '@/types/index';
 
 interface Props {
     languages: {

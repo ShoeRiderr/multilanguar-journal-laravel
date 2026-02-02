@@ -38,4 +38,65 @@ export interface User {
     [key: string]: unknown; // This allows for additional properties...
 }
 
+export interface Post {
+    id: number;
+    language_id: number;
+    title: string;
+    slug: string;
+    content_md: string;
+    status: string;
+    published_at: string | null;
+    categories: Category[];
+    post_view?: PostView | null;
+}
+
+export interface PostView {
+    post_id: number;
+    view_count: number;
+    last_viewed_at: string | null;
+}
+
+export interface Pages {
+    id: number;
+    language_id: number;
+    title: string;
+    slug: string;
+    content_md: string;
+    is_active: boolean;
+}
+
+export interface Language {
+    id: number;
+    code: string;
+    name: string;
+    native_name: string;
+    is_active: boolean;
+    is_default: boolean;
+}
+
+export interface Category {
+    id: number;
+    parent_id: number | null;
+    name: string | null;
+    slug: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+export interface PaginationMeta {
+    current_page: number;
+    from: number;
+    last_page: number;
+    path: string;
+    per_page: number;
+    to: number;
+    total: number;
+}
+
 export type BreadcrumbItemType = BreadcrumbItem;
