@@ -26,6 +26,12 @@ class PostResource extends JsonResource
             ]),
             'status' => $this->status,
             'published_at' => $this->published_at,
+            'main_photo' => $this->mainPhoto ? [
+                'url' => $this->mainPhoto->file_path ? asset('storage/' . $this->mainPhoto->file_path) : null,
+                'file_name' => $this->mainPhoto->file_name,
+                'mime_type' => $this->mainPhoto->mime_type,
+                'size' => $this->mainPhoto->size,
+            ] : null,
             'categories' => \App\Http\Resources\CategoryResource::collection($this->whenLoaded('categories')),
             'post_view' => $this->whenLoaded('postView'),
         ];

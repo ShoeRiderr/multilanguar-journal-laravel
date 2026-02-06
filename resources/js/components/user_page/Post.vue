@@ -12,7 +12,15 @@ defineProps<Props>();
 <template>
     <article class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300">
       <div class="aspect-video bg-slate-100 dark:bg-slate-900 overflow-hidden hover:cursor-pointer">
-        <img alt="Post thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBycmUbmTyqHkWB7uY6yFSd4hdqpjgyb3rS8xa11z84ahrjth75h6RkYjPDsxBp_XMyFZlE3l1DzHW5KSei0J8v0zZGexWs_JjbW2__Ee7q-19UmSiVEZCA9nUEQjCBwgxF0y3_e6pjpk0k2lnvDu44FWAKNI6JgdfMGuTAO1sVNE9q1_hiTVeYCbMnD3t48Y7fi6dExHYUlYzXMQ1tiaUxm5nfbFqg99LbgVCOhvaRh3pe-SdkeLIe_LktykNSeBCNvnJ9b-ceC3LB" />
+        <img
+          v-if="post.main_photo && post.main_photo.url"
+          :src="post.main_photo.url"
+          :alt="post.main_photo.file_name || 'Post thumbnail'"
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <div v-else class="w-full h-full flex items-center justify-center bg-slate-200 dark:bg-slate-700 text-slate-400">
+          <span>No image</span>
+        </div>
       </div>
       <div class="p-6">
         <div class="flex items-center justify-between mb-3">

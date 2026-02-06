@@ -40,12 +40,16 @@ class PostFactory extends Factory
     {
         return $this->afterCreating(function (Post $post) {
             $post->postView()->save(
-                PostView::factory()
-                    ->make()
+                PostView::factory()->make()
             );
 
             $post->categories()->attach(
                 Category::inRandomOrder()->take(rand(1, 3))->pluck('id')
+            );
+
+            // Attach one media image to the post
+            $post->media()->save(
+                \Database\Factories\MediaFactory::new()->make()
             );
         });
     }

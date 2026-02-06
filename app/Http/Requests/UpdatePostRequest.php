@@ -32,6 +32,7 @@ class UpdatePostRequest extends FormRequest
             'content_md' => ['required', 'string'],
             'status' => ['required', new Enum(PostStatus::class)],
             'published_at' => ['required', 'date'],
+            'main_photo' => ['nullable', 'image', 'max:5120'], // 5MB max
         ];
     }
 }

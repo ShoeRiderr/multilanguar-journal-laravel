@@ -58,7 +58,11 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request): RedirectResponse
     {
-        $this->postService->createPost($request->validated());
+        $data = $request->validated();
+        if ($request->hasFile('main_photo')) {
+            $data['main_photo'] = $request->file('main_photo');
+        }
+        $this->postService->createPost($data);
 
         return redirect()->route('admin.posts.index', [
             'locale' => app()->getLocale(),
@@ -86,7 +90,11 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, string $locale, Post $post): RedirectResponse
     {
-        $this->postService->updatePost($post, $request->validated());
+        $data = $request->validated();
+        if ($request->hasFile('main_photo')) {
+            $data['main_photo'] = $request->file('main_photo');
+        }
+        $this->postService->updatePost($post, $data);
 
         return redirect()->route('admin.posts.index', [
             'locale' => app()->getLocale(),

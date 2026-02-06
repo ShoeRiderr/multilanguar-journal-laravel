@@ -6,7 +6,6 @@ import type { Post as PostType } from '@/types/index';
 import Footer from '@/components/user_page/Footer.vue';
 import NavBar from '@/components/user_page/NavBar.vue';
 import Post from '@/components/user_page/Post.vue';
-import { dateDifference } from '@/lib/utils';
 
 const page = usePage();
 const locale = computed(() => page.props.locale as string);

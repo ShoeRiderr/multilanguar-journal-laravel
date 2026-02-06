@@ -48,6 +48,12 @@ export interface Post {
     published_at: string | null;
     categories: Category[];
     post_view?: PostView | null;
+    main_photo?: {
+        url: string | null;
+        file_name: string;
+        mime_type: string;
+        size: number;
+    } | null;
 }
 
 export interface PostView {
