@@ -1,12 +1,30 @@
 {
-  "sidebar": {
-    "home": "Home",
-    "dashboard": "Dashboard",
+  "welcome": {
+    "title": {
+      "part1": "Insights for the",
+      "part2": "Global",
+      "part3": "Professional"
+    },
+    "subtitle": "Welcome to CodeItAfterMe. Discover curated content, technical deep-dives, and industry news translated for a worldwide audience. Stay informed, stay ahead.",
+    "get_started": "Explore Posts",
+    "more": "Learn More",
+    "latest_posts": "Latest Posts",
+    "filtered_by": "Filtered by:"
+  },
+  "navbar": {
     "posts": "Posts",
-    "categories": "Categories",
-    "languages": "Languages",
-    "pages": "Pages",
+    "login": "Log in",
+    "register": "Register",
+    "language": "Language",
+    "profile": "Account",
     "settings": "Settings",
     "logout": "Log out"
+  },
+  "posts": {
+    "no_posts": "No posts available.",
+    "filtered_by": {
+      "recently_published": "Recently Published"
+    },
+    "all_articles": "View all Articles"
   }
 }

@@ -8,5 +8,33 @@
     "pages": "Strony",
     "settings": "Ustawienia",
     "logout": "Wyloguj się"
+  },
+  "welcome": {
+    "title": {
+      "part1": "Wskazówki dla",
+      "part2": "Globalnego",
+      "part3": "Profesjonalisty"
+    },
+    "subtitle": "Witamy w CodeItAfterMe. Odkryj wyselekcjonowane treści, techniczne analizy i wiadomości branżowe tłumaczone dla światowej publiczności. Bądź na bieżąco, bądź przed innymi.",
+    "get_started": "Przeglądaj posty",
+    "more": "Dowiedz się więcej",
+    "latest_posts": "Najnowsze posty",
+    "filtered_by": "Filtrowane według:"
+  },
+  "navbar": {
+    "posts": "Posty",
+    "login": "Zaloguj się",
+    "register": "Zarejestruj się",
+    "language": "Język",
+    "profile": "Konto",
+    "settings": "Ustawienia",
+    "logout": "Wyloguj się"
+  },
+  "posts": {
+    "no_posts": "Brak dostępnych postów.",
+    "filtered_by": {
+      "recently_published": "Ostatnio opublikowane"
+    },
+    "all_articles": "Wyświetl wszystkie artykuły"
   }
 }

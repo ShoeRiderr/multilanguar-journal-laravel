@@ -8,6 +8,9 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Fortify\Features;
 use App\Http\Resources\PostResource;
+use App\Models\Language;
+use App\Models\Post;
+use App\PostStatus;
 
 class WelcomeController extends Controller
 {
@@ -20,7 +23,9 @@ class WelcomeController extends Controller
 
     public function index(string $locale): Response
     {
-        $posts = $this->postService->getPostsByLanguage($locale, 10, 3);
+        $language = Language::where('code', $locale)->firstOrFail();
+        $posts = $this->postService->getPostsByLanguage($language->id, 10, 3, PostStatus::PUBLISHED);
+
         return Inertia::render('Welcome', [
             'canRegister' => Features::enabled(Features::registration()),
             'posts' => PostResource::collection($posts),

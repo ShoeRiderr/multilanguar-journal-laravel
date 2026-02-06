@@ -1,12 +1,30 @@
 {
-  "sidebar": {
-    "home": "Startseite",
-    "dashboard": "Übersicht",
-    "posts": "Beiträge",
-    "categories": "Kategorien",
-    "languages": "Sprachen",
-    "pages": "Seiten",
-    "settings": "Einstellungen",
-    "logout": "Abmelden"
-  }
+	"welcome": {
+		"title": {
+			"part1": "Einblicke für die",
+			"part2": "Globale",
+			"part3": "Fachkraft"
+		},
+		"subtitle": "Willkommen bei CodeItAfterMe. Entdecken Sie kuratierte Inhalte, technische Einblicke und Branchennachrichten für ein weltweites Publikum. Bleiben Sie informiert, bleiben Sie voraus.",
+		"get_started": "Beiträge erkunden",
+		"more": "Mehr erfahren",
+		"latest_posts": "Neueste Beiträge",
+		"filtered_by": "Gefiltert nach:"
+	},
+	"navbar": {
+		"posts": "Beiträge",
+		"login": "Anmelden",
+		"register": "Registrieren",
+		"language": "Sprache",
+		"profile": "Konto",
+		"settings": "Einstellungen",
+		"logout": "Abmelden"
+	},
+	"posts": {
+		"no_posts": "Keine Beiträge verfügbar.",
+		"filtered_by": {
+			"recently_published": "Kürzlich veröffentlicht"
+		},
+		"all_articles": "Alle Artikel anzeigen"
+	}
 }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Post;
+use App\PostStatus;
 
 class PostService
 {
@@ -14,13 +15,16 @@ class PostService
      * @param int|null $latest If set, returns last $latest posts (not paginated)
      * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection
      */
-    public function getPostsByLanguage($languageId, $perPage = 10, int|null $latest = null)
+    public function getPostsByLanguage(int $languageId, int $perPage = 10, int|null $latest = null, PostStatus|null $status = null)
     {
         $query = Post::with(['categories', 'postView'])
-            ->where('language_id', $languageId);
+            ->where('language_id', $languageId)
+            ->when($status !== null, function ($q) use ($status) {
+                $q->where('status', $status->value);
+            });
 
         if ($latest !== null) {
-            return $query->orderByDesc('created_at')->take($latest)->get();
+            return $query->orderBy('published_at', 'desc')->take($latest)->get();
         }
 
         return $query->paginate($perPage);
