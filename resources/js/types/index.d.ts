@@ -1,3 +1,19 @@
+
+export interface Page {
+    id: number;
+    title: string;
+    slug: string;
+}
+
+export interface PageResourceType {
+  id: number;
+  language_id: number;
+  title: string;
+  slug: string;
+  content_md: string;
+  is_active: boolean;
+}
+
 import { InertiaLinkProps } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
 

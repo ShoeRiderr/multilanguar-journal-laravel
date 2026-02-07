@@ -26,6 +26,12 @@ class PageResource extends JsonResource
             'content_md' => Str::markdown($translation->content_md ?? '', [
                 'html_input' => 'strip',
                 'allow_unsafe_links' => false,
+                'heading_permalink' => [
+                    'symbol' => '#',
+                ],
+            ],
+            [
+                new \League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension(),
             ]),
             'is_active' => $this->is_active,
         ];

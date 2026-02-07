@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Language;
+use Illuminate\Support\Facades\URL;
 
 class SetLanguage
 {
@@ -23,10 +24,13 @@ class SetLanguage
                 Language::where('is_default', true)->first()->code ?? app()->getLocale()
             )
         );
-        
         $language = Language::where('code', $locale)->firstOrFail();
         $request->headers->set('Language-ID', $language->id);
-        
+
+        URL::defaults(['locale' => $locale]);
+
+        app()->setLocale($locale);
+
         return $next($request);
     }
 }

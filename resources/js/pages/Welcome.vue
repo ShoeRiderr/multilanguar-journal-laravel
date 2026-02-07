@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { Head, usePage, Link } from '@inertiajs/vue3';
 import { useTrans } from '@//composables/trans';
-import type { Post as PostType } from '@/types/index';
+import type { Post as PostType, Page as PageType } from '@/types/index';
 import Footer from '@/components/user_page/Footer.vue';
 import NavBar from '@/components/user_page/NavBar.vue';
 import Post from '@/components/user_page/Post.vue';
@@ -11,24 +11,26 @@ const page = usePage();
 const locale = computed(() => page.props.locale as string);
 
 interface Props {
-    posts: {
-        data: PostType[];
-    };
-    canRegister: boolean;
+  posts: {
+    data: PostType[];
+  };
+  canRegister: boolean;
+  pages?: PageType[];
 }
 
-withDefaults(
-    defineProps<Props>(),
-    {
-        canRegister: true,
-    },
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    canRegister: true,
+    pages: () => [],
+  },
 );
 </script>
 
 <template>
     <Head title="Welcome" />
 
-    <NavBar :can-register="canRegister" />
+    <NavBar :can-register="canRegister" :pages="props.pages" />
   
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <section class="text-center py-16 md:py-24 bg-gradient-to-b from-blue-50/50 to-transparent dark:from-blue-900/10 dark:to-transparent rounded-3xl mb-16">

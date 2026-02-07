@@ -34,21 +34,10 @@ test('deletes category_post records when category is deleted', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $locale = app()->getLocale();
     $this->actingAs($admin);
-    $category = Category::factory()->create();
     $post = \App\Models\Post::factory()->create();
+    $category = $post->categories()->first();
     // Attach post to category (handle both possible pivot table names)
-    if (\Schema::hasTable('category_post')) {
-        $category->posts()->attach($post->id);
-        $pivotTable = 'category_post';
-    } else {
-        $category->posts()->newPivotStatement()->from('caategory_post')->insert([
-            'category_id' => $category->id,
-            'post_id' => $post->id,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        $pivotTable = 'caategory_post';
-    }
+    $pivotTable = 'category_post';
     $this->assertDatabaseHas($pivotTable, [
         'category_id' => $category->id,
         'post_id' => $post->id,

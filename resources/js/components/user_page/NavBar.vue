@@ -2,19 +2,21 @@
 import { logout, login, register } from '@/routes';
 import { computed, ref, onMounted, onBeforeUnmount, type Ref } from 'vue';
 import { Head, usePage, Link } from '@inertiajs/vue3';
-import { type NavItem } from '@/types';
+import { type NavItem, Page as PageType } from '@/types';
 import { LogOut } from 'lucide-vue-next';
 import { useTrans } from '@//composables/trans';
 
 interface Props {
-    canRegister: boolean;
+  canRegister: boolean;
+  pages?: PageType[];
 }
 
-withDefaults(
-    defineProps<Props>(),
-    {
-        canRegister: true,
-    },
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    canRegister: true,
+    pages: () => [],
+  },
 );
 const page = usePage();
 const locale = computed(() => page.props.locale as string);
@@ -74,10 +76,14 @@ function switchLanguage(languageCode: string) {
     window.location.href = pathParts.join('/');
 }
 const mainNavItems = computed<NavItem[]>(() => [
-    {
-        title: useTrans('navbar.posts'),
-        href: `/${locale.value}/posts`,
-    },
+  {
+    title: useTrans('navbar.posts'),
+    href: `/${locale.value}/posts`,
+  },
+  ...props.pages.map(page => ({
+    title: page.title,
+    href: `/${locale.value}/${page.slug}`,
+  })),
 ]);
 </script>
 
