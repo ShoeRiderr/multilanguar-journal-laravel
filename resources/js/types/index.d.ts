@@ -72,6 +72,11 @@ export interface Post {
     } | null;
 }
 
+export interface PostsResponse {
+    data: Post[];
+    meta: PaginationMeta;
+}
+
 export interface PostView {
     post_id: number;
     view_count: number;

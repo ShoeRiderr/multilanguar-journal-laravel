@@ -3,7 +3,6 @@
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Fortify\Features;
 
 Route::middleware(['set.language'])->prefix('{locale}')->where(['locale' => '[a-z]{2}'])->group(function () {
     Route::get('dashboard', function () {
@@ -13,9 +12,6 @@ Route::middleware(['set.language'])->prefix('{locale}')->where(['locale' => '[a-
         }
         return Inertia::render('Dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
-    // User page view route (e.g. /en/test-view)
-    Route::get('{slug}', [\App\Http\Controllers\UserPageViewController::class, 'show'])
-        ->where('slug', '[a-zA-Z0-9-_]+');
     Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
     Route::get('posts/{post}/view', [\App\Http\Controllers\PostViewController::class, 'view'])->name('posts.view');
@@ -37,4 +33,8 @@ Route::middleware(['set.language'])->prefix('{locale}')->where(['locale' => '[a-
     });
 
     require __DIR__.'/settings.php';
+
+    // User page view route (e.g. /en/test-view)
+    Route::get('{slug}', [\App\Http\Controllers\UserPageViewController::class, 'show'])
+        ->where('slug', '[a-zA-Z0-9-_]+');
 });

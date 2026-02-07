@@ -1,55 +1,28 @@
 <script setup lang="ts">
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-
-import Pagination from '@/shared/Pagination.vue';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-
-interface Post {
-    id: number;
-    language_id: number;
-    title: string;
-    slug: string;
-    content_md: string;
-    status: string;
-    published_at: Date | null;
-}
-
-interface PaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-}
-
-interface PaginationMeta {
-    current_page: number;
-    from: number;
-    last_page: number;
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-}
+import NavBar from '@/components/user_page/NavBar.vue';
+import Footer from '@/components/user_page/Footer.vue';
+import { type PostsResponse, type PaginationMeta, type PaginationLink, Page as PageType } from '@/types';
 
 interface Props {
-    posts: {
-        data: Post[];
-        meta: PaginationMeta;
-    };
+    posts: PostsResponse;
+    pages?: PageType[];
+    canRegister: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    canRegister: true,
+    pages: () => [],
+    posts: () => ({ data: [], meta: { current_page: 1, last_page: 1, path: '', from: 0, to: 0, per_page: 0, total: 0 } }),
+  }
+);
+
 const page = usePage();
 const locale = computed(() => page.props.locale as string);
 const dashboardUrl = computed(() => `/${locale.value}/dashboard`);
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Posts',
-        href: dashboardUrl.value,
-    },
-];
 
 // Build pagination links from meta
 const paginationLinks = computed(() => {
@@ -89,15 +62,15 @@ const paginationLinks = computed(() => {
 </script>
 
 <template>
-    <Head title="Posts" />
-
-    <AppLayout :breadcrumbs="breadcrumbs">
-    <div>
-      <div v-for="post in props.posts.data" :key="post.id">
-        {{ post.title }}
+    <NavBar :can-register="props.canRegister" :pages="props.pages" />
+    <main class="container mx-auto py-8">
+      <div v-if="props.posts" class="space-y-4">
+          <div v-for="post in props.posts.data" :key="post.id">
+            {{ post.title }}
+          </div>
+          <pagination :links="paginationLinks" />
       </div>
-      <pagination :links="paginationLinks" />
-    </div>
-
-    </AppLayout>
+      <div v-else class="text-center text-gray-500">Loading...</div>
+    </main>
+    <Footer />
 </template>
