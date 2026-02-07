@@ -10,8 +10,15 @@ function getNestedTranslation(obj: Translations, key: string): string | undefine
     return key.split('.').reduce<any>((acc, part) => (acc && acc[part] !== undefined ? acc[part] : undefined), obj);
 }
 
-export function useTrans(value: string): string {
+export function useTrans(value: string, params?: Record<string, any>): string {
     const translations = usePage().props.translations as Translations;
-    const result = getNestedTranslation(translations, value);
+    let result = getNestedTranslation(translations, value);
+    if (typeof result === 'string' && params) {
+        let translated = result;
+        Object.keys(params).forEach(key => {
+            translated = translated.replace(new RegExp(`{${key}}`, 'g'), params[key]);
+        });
+        result = translated;
+    }
     return typeof result === 'string' ? result : value;
 }

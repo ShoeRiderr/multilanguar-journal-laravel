@@ -1,76 +1,60 @@
 <script setup lang="ts">
-import { Head, usePage } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import NavBar from '@/components/user_page/NavBar.vue';
 import Footer from '@/components/user_page/Footer.vue';
-import { type PostsResponse, type PaginationMeta, type PaginationLink, Page as PageType } from '@/types';
+import Post from '@/components/user_page/Post.vue';
+import Pagination from '@/shared/Pagination.vue';
+import { type PostsResponse, type PaginationLink, Page as PageType, Language, Category } from '@/types';
+import FilterPosts from '@/components/user_page/posts/FilterPosts.vue';
+import { useTrans } from '@/composables/trans';
 
 interface Props {
     posts: PostsResponse;
     pages?: PageType[];
     canRegister: boolean;
+    languages: Language[];
+    categories: {
+        data: Category[]
+    };
 }
 
 const props = withDefaults(
-  defineProps<Props>(),
-  {
-    canRegister: true,
-    pages: () => [],
-    posts: () => ({ data: [], meta: { current_page: 1, last_page: 1, path: '', from: 0, to: 0, per_page: 0, total: 0 } }),
-  }
+    defineProps<Props>(),
+    {
+        canRegister: true,
+        pages: () => [],
+        posts: () => ({ data: [], meta: { current_page: 1, last_page: 1, path: '', from: 0, to: 0, per_page: 0, total: 0 } }),
+        languages: () => [],
+        categories: () => ({ data: [] }),
+    }
 );
 
 const page = usePage();
 const locale = computed(() => page.props.locale as string);
-const dashboardUrl = computed(() => `/${locale.value}/dashboard`);
-
-// Build pagination links from meta
-const paginationLinks = computed(() => {
-    const links: PaginationLink[] = [];
-    const meta = props.posts.meta;
-    const path = meta.path;
-    
-    // Previous page
-    if (meta.current_page > 1) {
-        links.push({
-            url: `${path}?page=${meta.current_page - 1}`,
-            label: '← Previous',
-            active: false,
-        });
-    }
-    
-    // Page numbers
-    for (let i = 1; i <= meta.last_page; i++) {
-        links.push({
-            url: i === 1 ? path : `${path}?page=${i}`,
-            label: i.toString(),
-            active: i === meta.current_page,
-        });
-    }
-    
-    // Next page
-    if (meta.current_page < meta.last_page) {
-        links.push({
-            url: `${path}?page=${meta.current_page + 1}`,
-            label: 'Next →',
-            active: false,
-        });
-    }
-    
-    return links;
-});
 </script>
 
 <template>
     <NavBar :can-register="props.canRegister" :pages="props.pages" />
-    <main class="container mx-auto py-8">
-      <div v-if="props.posts" class="space-y-4">
-          <div v-for="post in props.posts.data" :key="post.id">
-            {{ post.title }}
-          </div>
-          <pagination :links="paginationLinks" />
-      </div>
-      <div v-else class="text-center text-gray-500">Loading...</div>
-    </main>
-    <Footer />
+    <div
+        :class="['bg-background-light', 'dark:bg-background-dark', 'text-slate-900', 'dark:text-slate-100', 'min-h-screen', 'flex', 'flex-col', 'transition-colors', 'duration-200']">
+        <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <FilterPosts :languages="props.languages" :categories="props.categories.data" />
+                <section class="flex-1">
+                    <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h1 class="text-2xl font-bold dark:text-white">{{ useTrans('posts.filtered_by.recently_published') }}</h1>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ useTrans('posts.filter_result_description', { count: props.posts.meta.total }) }}</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+                        <Post v-for="post in props.posts.data" :key="post.id" :post="post" />
+                    </div>
+                    <Pagination :meta="props.posts.meta" class="flex items-center justify-center mt-6" />
+                </section>
+            </div>
+        </main>
+        <Footer />
+    </div>
 </template>

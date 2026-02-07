@@ -1,0 +1,153 @@
+<script setup lang="ts">
+import { useTrans } from '@//composables/trans';
+import Input from '@/components/ui/input/Input.vue';
+import Label from '@/components/ui/label/Label.vue';
+import InputError from '@/components/InputError.vue';
+import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
+import { Language, Category } from '@/types';
+import DropdownMenu from '@/components/ui/dropdown-menu/DropdownMenu.vue';
+import DropdownMenuTrigger from '@/components/ui/dropdown-menu/DropdownMenuTrigger.vue';
+import DropdownMenuContent from '@/components/ui/dropdown-menu/DropdownMenuContent.vue';
+import DropdownMenuCheckboxItem from '@/components/ui/dropdown-menu/DropdownMenuCheckboxItem.vue';
+import { ref } from 'vue';
+
+interface Props {
+    languages?: Language[];
+    categories?: Category[];
+}
+
+const props = withDefaults(
+    defineProps<Props>(),
+    {
+        languages: () => [],
+        categories: () => [],
+    },
+);
+
+const selectedCategories = ref<number[]>([]);
+const selectedLanguages = ref<number[]>([]);
+
+function toggleCategory(id: number) {
+    const idx = selectedCategories.value.indexOf(id);
+    if (idx === -1) {
+        selectedCategories.value.push(id);
+    } else {
+        selectedCategories.value.splice(idx, 1);
+    }
+}
+
+function toggleLanguage(id: number, checked: boolean) {
+    const idx = selectedLanguages.value.indexOf(id);
+    if (checked && idx === -1) {
+        selectedLanguages.value.push(id);
+        return;
+    }
+    if (!checked && idx !== -1) {
+        selectedLanguages.value.splice(idx, 1);
+    }
+}
+</script>
+
+<template>
+    <aside class="w-full lg:w-72 flex-shrink-0">
+        <div class="sticky top-24 space-y-8">
+            <div class="space-y-4">
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    {{ useTrans('posts.filter.title') }}
+                </h2>
+                <div class="relative">
+                    <div class="grid gap-2">
+                        <Label for="search" class="sr-only">Search</Label>
+                        <Input
+                            class="w-full pr-4 py-2.5 rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:placeholder-slate-500 focus:ring-primary focus:border-primary"
+                            id="search" type="text" name="search" ref="searchInput"
+                            :placeholder="useTrans('posts.filter.search_keyword')" />
+                        <!-- <InputError :message="errors.search" /> -->
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    {{ useTrans('posts.filter.category') }}
+                </h2>
+                <DropdownMenu>
+                    <DropdownMenuTrigger as-child>
+                        <button type="button"
+                            class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary hover:cursor-pointer px-4 py-2.5 text-left">
+                            <span v-if="selectedCategories.length === 0">{{ useTrans('posts.filter.all_categories')
+                                }}</span>
+                            <span v-else>
+                                {{categories.filter(cat => selectedCategories.includes(cat.id)).map(cat =>
+                                cat.name).join(', ') }}
+                            </span>
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent class="w-56">
+                        <DropdownMenuCheckboxItem
+                            class="data-[state=checked]:bg-primary data-[state=checked]:text-white dark:data-[state=checked]:bg-slate-900 dark:data-[state=checked]:text-white dark:data-[state=checked]:font-bold"
+                            :checked="selectedCategories.length === 0"
+                            @click="selectedCategories.length = 0">
+                            {{ useTrans('posts.filter.all_categories') }}
+                        </DropdownMenuCheckboxItem>
+                        <DropdownMenuCheckboxItem v-for="category in categories" :key="category.id"
+                            class="data-[state=checked]:bg-primary data-[state=checked]:text-white dark:data-[state=checked]:bg-slate-900 dark:data-[state=checked]:text-white dark:data-[state=checked]:font-bold"
+                            :checked="selectedCategories.includes(category.id)" @click="toggleCategory(category.id)">
+                            {{ category.name }}
+                        </DropdownMenuCheckboxItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+            <div class="space-y-4">
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    {{ useTrans('posts.filter.language') }}
+                </h2>
+                <div class="space-y-2">
+                    <Label v-for="language in languages" :key="language.id"
+                        :for="`language-${language.id}`"
+                        class="flex items-center gap-2 cursor-pointer group">
+                        <Checkbox
+                            :id="`language-${language.id}`"
+                            :checked="selectedLanguages.includes(language.id)"
+                            @click="toggleLanguage(language.id, !selectedLanguages.includes(language.id))"
+                            class="border-slate-300 dark:border-slate-700 text-primary focus:ring-primary dark:bg-slate-800"
+                        />
+                        <span
+                            class="text-sm text-slate-600 dark:text-slate-300 group-hover:text-primary transition-colors">{{
+                            language.name }}</span>
+                    </Label>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    {{ useTrans('posts.filter.date_range.title') }}
+                </h2>
+                <div class="space-y-3">
+                    <div class="relative">
+                        <label
+                            class="text-[10px] absolute -top-2 left-2 px-1 bg-white dark:bg-slate-900 text-slate-400 font-medium uppercase">{{
+                                useTrans('posts.filter.date_range.from') }}</label>
+                        <Input
+                            class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm focus:ring-primary focus:border-primary"
+                            type="date" />
+                    </div>
+                    <div class="relative">
+                        <label
+                            class="text-[10px] absolute -top-2 left-2 px-1 bg-white dark:bg-slate-900 text-slate-400 font-medium uppercase">{{
+                                useTrans('posts.filter.date_range.to') }}</label>
+                        <Input
+                            class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm focus:ring-primary focus:border-primary"
+                            type="date" />
+                    </div>
+                </div>
+            </div>
+            <button
+                class="w-full py-2.5 bg-primary hover:bg-blue-600 text-white font-medium rounded-lg shadow-sm shadow-blue-200 dark:shadow-none transition-all hover:cursor-pointer">
+                {{ useTrans('posts.filter.apply') }}
+            </button>
+            <button
+                class="w-full py-2 text-sm text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors underline-offset-4 hover:underline hover:cursor-pointer">
+                {{ useTrans('posts.filter.reset') }}
+            </button>
+        </div>
+    </aside>
+</template>

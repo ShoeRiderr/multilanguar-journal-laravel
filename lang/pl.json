@@ -35,6 +35,26 @@
     "filtered_by": {
       "recently_published": "Ostatnio opublikowane"
     },
-    "all_articles": "Wyświetl wszystkie artykuły"
+    "all_articles": "Wyświetl wszystkie artykuły",
+    "filter": {
+      "title": "Szukaj postów",
+      "search_keyword": "Po tytule lub słowie kluczowym...",
+      "category": "Kategoria",
+      "all_categories": "Wszystkie kategorie",
+      "language": "Język treści",
+      "date_range": {
+        "title": "Zakres dat",
+        "from": "Od",
+        "to": "Do"
+      },
+      "all_languages": "Wszystkie języki",
+      "apply": "Zastosuj filtr",
+      "reset": "Zresetuj wszystko"
+    },
+    "filter_result_description": "Wyświetlanie {count} publikacji znalezionych w bazie danych"
+  },
+  "pagination": {
+    "previous": "Poprzednia",
+    "next": "Następna"
   }
 }

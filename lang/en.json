@@ -25,6 +25,26 @@
     "filtered_by": {
       "recently_published": "Recently Published"
     },
-    "all_articles": "View all Articles"
+    "all_articles": "View all Articles",
+    "filter": {
+      "title": "Search Posts",
+      "search_keyword": "By title or keyword...",
+      "category": "Category",
+      "all_categories": "All Categories",
+      "language": "Content Language",
+      "date_range": {
+        "title": "Date Range",
+        "from": "From",
+        "to": "To"
+      },
+      "all_languages": "All Languages",
+      "apply": "Apply Filter",
+      "reset": "Reset all"
+    },
+    "filter_result_description": "Showing {count} publications found in database"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next"
   }
 }

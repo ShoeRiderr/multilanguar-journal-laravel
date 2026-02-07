@@ -19,8 +19,8 @@ class PageTranslationFactory extends Factory
         return [
             'page_id' => Page::factory(),
             'language_id' => $this->faker->randomElement([1, 2, 3]),
-            'title' => $this->faker->sentence(),
-            'slug' => $this->faker->slug(),
+            'title' => $this->faker->words(2, true),
+            'slug' => $this->faker->slug(2),
             'content_md' => $this->faker->paragraph(3),
         ];
     }

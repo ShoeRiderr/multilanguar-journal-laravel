@@ -25,6 +25,26 @@
 		"filtered_by": {
 			"recently_published": "Kürzlich veröffentlicht"
 		},
-		"all_articles": "Alle Artikel anzeigen"
+		"all_articles": "Alle Artikel anzeigen",
+		"filter": {
+			"title": "Beiträge suchen",
+			"search_keyword": "Nach Titel oder Stichwort...",
+			"category": "Kategorie",
+			"all_categories": "Alle Kategorien",
+			"language": "Inhaltssprache",
+			"date_range": {
+				"title": "Zeitraum",
+				"from": "Von",
+				"to": "Bis"
+			},
+			"all_languages": "Alle Sprachen",
+			"apply": "Filter anwenden",
+			"reset": "Alles zurücksetzen"
+		},
+		"filter_result_description": "{count} Veröffentlichungen in der Datenbank gefunden"
+	},
+	"pagination": {
+		"previous": "Zurück",
+		"next": "Weiter"
 	}
 }

@@ -9,8 +9,12 @@ use Illuminate\Support\Facades\Schema;
 
 class CategoryService
 {
-    public function getCategories(): LengthAwarePaginator
+    public function getCategories(bool $all = false): LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection
     {
+        if ($all) {
+            return Category::all();
+        }
+
         return Category::paginate(10);
     }
 
