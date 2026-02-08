@@ -20,10 +20,7 @@ class PostResource extends JsonResource
             'language_id' => $this->language_id,
             'title' => $this->title,
             'slug' => $this->slug,
-            'content_md' => Str::markdown($this->content_md, [
-                'html_input' => 'strip',
-                'allow_unsafe_links' => false,
-            ]),
+            'content_md' => $this->content_md,
             'status' => $this->status,
             'published_at' => $this->published_at,
             'main_photo' => $this->mainPhoto ? [
@@ -34,6 +31,8 @@ class PostResource extends JsonResource
             ] : null,
             'categories' => \App\Http\Resources\CategoryResource::collection($this->whenLoaded('categories')),
             'post_view' => $this->whenLoaded('postView'),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

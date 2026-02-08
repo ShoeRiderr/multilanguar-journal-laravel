@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
 import NavBar from '@/components/user_page/NavBar.vue';
 import Footer from '@/components/user_page/Footer.vue';
 import Post from '@/components/user_page/Post.vue';
 import Pagination from '@/shared/Pagination.vue';
-import { type PostsResponse, type PaginationLink, Page as PageType, Language, Category } from '@/types';
+import { type PostsResponse, Page as PageType, Language, Category } from '@/types';
 import FilterForm from '@/components/user_page/posts/FilterForm.vue';
 import { useTrans } from '@/composables/trans';
 
@@ -43,9 +41,6 @@ const props = withDefaults(
         }),
     }
 );
-
-const page = usePage();
-const locale = computed(() => page.props.locale as string);
 </script>
 
 <template>

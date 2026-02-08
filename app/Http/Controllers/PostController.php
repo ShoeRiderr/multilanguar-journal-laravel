@@ -59,6 +59,7 @@ class PostController extends Controller
     {
         $post->load(['categories', 'postView']);
         return Inertia::render('posts/Show', [
+            'canRegister' => Features::enabled(Features::registration()),
             'post' => new PostResource($post),
         ]);
     }

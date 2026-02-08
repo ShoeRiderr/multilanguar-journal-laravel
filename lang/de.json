@@ -41,10 +41,21 @@
 			"apply": "Filter anwenden",
 			"reset": "Alles zurücksetzen"
 		},
-		"filter_result_description": "{count} Veröffentlichungen in der Datenbank gefunden"
+		"filter_result_description": "{count} Veröffentlichungen in der Datenbank gefunden",
+		"categories": "Kategorien",
+		"language": "Sprache",
+		"back_to_posts": "Zurück zu Beiträgen",
+		"post_info": "Beitragsinfo",
+		"last_updated": "Zuletzt aktualisiert",
+		"share_post": "Diesen Artikel teilen",
+		"published": "Veröffentlicht",
+		"link_copied": "Link in die Zwischenablage kopiert!",
+		"link_copy_failed": "Link konnte nicht kopiert werden. Bitte erneut versuchen.",
+		"estimated_read_time": "{time} Min Lesezeit"
 	},
 	"pagination": {
 		"previous": "Zurück",
 		"next": "Weiter"
-	}
+	},
+	"no_image": "Kein Bild"
 }

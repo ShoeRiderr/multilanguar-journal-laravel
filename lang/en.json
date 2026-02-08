@@ -41,10 +41,21 @@
       "apply": "Apply Filter",
       "reset": "Reset all"
     },
-    "filter_result_description": "Showing {count} publications found in database"
+    "filter_result_description": "Showing {count} publications found in database",
+    "categories": "Categories",
+    "language": "Language",
+    "back_to_posts": "Back to posts",
+    "post_info": "Post Info",
+    "last_updated": "Last Updated",
+    "share_post": "Share this article",
+    "published": "Published",
+    "link_copied": "Link copied to clipboard!",
+    "link_copy_failed": "Failed to copy link. Please try again.",
+    "estimated_read_time": "{time} min read"
   },
   "pagination": {
     "previous": "Previous",
     "next": "Next"
-  }
+  },
+  "no_image": "No image"
 }

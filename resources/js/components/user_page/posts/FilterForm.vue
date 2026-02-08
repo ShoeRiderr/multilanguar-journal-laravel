@@ -181,7 +181,7 @@ function handleReset() {
                             class="text-[10px] absolute -top-2 left-2 px-1 bg-white dark:bg-slate-900 text-slate-400 font-medium uppercase">{{
                                 useTrans('posts.filter.date_range.from') }}</label>
                         <Input
-                            class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm focus:ring-primary focus:border-primary"
+                            class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm focus:ring-primary focus:border-primary hover:cursor-text"
                             type="date" name="date_from" v-model="dateFrom" />
                     </div>
                     <div class="relative">
@@ -189,7 +189,7 @@ function handleReset() {
                             class="text-[10px] absolute -top-2 left-2 px-1 bg-white dark:bg-slate-900 text-slate-400 font-medium uppercase">{{
                                 useTrans('posts.filter.date_range.to') }}</label>
                         <Input
-                            class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm focus:ring-primary focus:border-primary"
+                            class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm focus:ring-primary focus:border-primary hover:cursor-text"
                             type="date" name="date_to" v-model="dateTo" />
                     </div>
                 </div>

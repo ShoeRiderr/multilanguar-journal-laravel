@@ -1,14 +1,4 @@
 {
-  "sidebar": {
-    "home": "Strona główna",
-    "dashboard": "Panel główny",
-    "posts": "Posty",
-    "categories": "Kategorie",
-    "languages": "Języki",
-    "pages": "Strony",
-    "settings": "Ustawienia",
-    "logout": "Wyloguj się"
-  },
   "welcome": {
     "title": {
       "part1": "Wskazówki dla",
@@ -51,10 +41,21 @@
       "apply": "Zastosuj filtr",
       "reset": "Zresetuj wszystko"
     },
-    "filter_result_description": "Wyświetlanie {count} publikacji znalezionych w bazie danych"
+    "filter_result_description": "Wyświetlanie {count} publikacji znalezionych w bazie danych",
+    "categories": "Kategorie",
+    "language": "Język",
+    "back_to_posts": "Powrót do postów",
+    "post_info": "Informacje o poście",
+    "last_updated": "Ostatnia aktualizacja",
+    "share_post": "Udostępnij ten artykuł",
+    "published": "Opublikowano",
+    "link_copied": "Link skopiowany do schowka!",
+    "link_copy_failed": "Nie udało się skopiować linku. Spróbuj ponownie.",
+    "estimated_read_time": "{time} min czytania"
   },
   "pagination": {
     "previous": "Poprzednia",
     "next": "Następna"
-  }
+  },
+  "no_image": "Brak obrazu"
 }

@@ -70,6 +70,8 @@ export interface Post {
         mime_type: string;
         size: number;
     } | null;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface PostsResponse {
