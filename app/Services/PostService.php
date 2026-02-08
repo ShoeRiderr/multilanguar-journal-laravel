@@ -31,6 +31,59 @@ class PostService
         return $query->paginate($perPage);
     }
 
+    /**
+     * Filter posts by multiple criteria.
+     *
+     * @param array $filters
+     * @param int $perPage
+     * @param int|null $defaultLanguageId
+     * @param PostStatus|null $status
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getFilteredPosts(array $filters, int $perPage = 10, int|null $defaultLanguageId = null, PostStatus|null $status = null)
+    {
+        $query = Post::with(['categories', 'postView'])
+            ->when($status !== null, function ($q) use ($status) {
+                $q->where('status', $status->value);
+            });
+
+        $languageIds = $filters['languages'] ?? [];
+        if (!empty($languageIds)) {
+            $query->whereIn('language_id', $languageIds);
+        } elseif ($defaultLanguageId !== null) {
+            $query->where('language_id', $defaultLanguageId);
+        }
+
+        $categoryIds = $filters['categories'] ?? [];
+        if (!empty($categoryIds)) {
+            $query->whereHas('categories', function ($q) use ($categoryIds) {
+                $q->whereIn('categories.id', $categoryIds);
+            });
+        }
+
+        $search = $filters['search'] ?? null;
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('content_md', 'like', '%' . $search . '%');
+            });
+        }
+
+        $dateFrom = $filters['date_from'] ?? null;
+        if (!empty($dateFrom)) {
+            $query->whereDate('published_at', '>=', $dateFrom);
+        }
+
+        $dateTo = $filters['date_to'] ?? null;
+        if (!empty($dateTo)) {
+            $query->whereDate('published_at', '<=', $dateTo);
+        }
+
+        return $query
+            ->orderBy('published_at', 'desc')
+            ->paginate($perPage);
+    }
+
 
     public function createPost(array $data): Post
     {

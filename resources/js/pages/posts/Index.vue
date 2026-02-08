@@ -6,7 +6,7 @@ import Footer from '@/components/user_page/Footer.vue';
 import Post from '@/components/user_page/Post.vue';
 import Pagination from '@/shared/Pagination.vue';
 import { type PostsResponse, type PaginationLink, Page as PageType, Language, Category } from '@/types';
-import FilterPosts from '@/components/user_page/posts/FilterPosts.vue';
+import FilterForm from '@/components/user_page/posts/FilterForm.vue';
 import { useTrans } from '@/composables/trans';
 
 interface Props {
@@ -16,6 +16,13 @@ interface Props {
     languages: Language[];
     categories: {
         data: Category[]
+    };
+    filters?: {
+        search?: string;
+        categories?: number[];
+        languages?: number[];
+        date_from?: string;
+        date_to?: string;
     };
 }
 
@@ -27,6 +34,13 @@ const props = withDefaults(
         posts: () => ({ data: [], meta: { current_page: 1, last_page: 1, path: '', from: 0, to: 0, per_page: 0, total: 0 } }),
         languages: () => [],
         categories: () => ({ data: [] }),
+        filters: () => ({
+            search: '',
+            categories: [],
+            languages: [],
+            date_from: '',
+            date_to: '',
+        }),
     }
 );
 
@@ -40,7 +54,7 @@ const locale = computed(() => page.props.locale as string);
         :class="['bg-background-light', 'dark:bg-background-dark', 'text-slate-900', 'dark:text-slate-100', 'min-h-screen', 'flex', 'flex-col', 'transition-colors', 'duration-200']">
         <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
             <div class="flex flex-col lg:flex-row gap-8">
-                <FilterPosts :languages="props.languages" :categories="props.categories.data" />
+                <FilterForm :languages="props.languages" :categories="props.categories.data" :filters="props.filters" />
                 <section class="flex-1">
                     <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
