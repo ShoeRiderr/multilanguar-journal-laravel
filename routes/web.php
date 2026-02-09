@@ -18,6 +18,14 @@ Route::middleware(['set.language'])->prefix('{locale}')->where(['locale' => '[a-
 
     Route::resource('posts', App\Http\Controllers\PostController::class)
         ->only(['show', 'index']);
+
+    Route::get('privacy-policy', function () {
+        return Inertia::render('PrivacyPolicy');
+    })->name('privacy-policy');
+
+    Route::get('terms-of-service', function () {
+        return Inertia::render('TermsOfService');
+    })->name('terms-of-service');
     Route::middleware(['auth', 'verified'])
         ->prefix('admin')
         ->name('admin.')

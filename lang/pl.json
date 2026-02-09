@@ -21,6 +21,7 @@
     "logout": "Wyloguj się"
   },
   "posts": {
+    "title": "Posty",
     "no_posts": "Brak dostępnych postów.",
     "filtered_by": {
       "recently_published": "Ostatnio opublikowane"
@@ -49,7 +50,13 @@
     "published": "Opublikowano",
     "link_copied": "Link skopiowany do schowka!",
     "link_copy_failed": "Nie udało się skopiować linku. Spróbuj ponownie.",
-    "estimated_read_time": "{time} min czytania"
+    "estimated_read_time": "{time} min czytania",
+    "status": {
+      "published": "Opublikowany",
+      "draft": "Szkic",
+      "archived": "Zarchiwizowany"
+    },
+    "main_photo": "Główne zdjęcie"
   },
   "pagination": {
     "previous": "Poprzednia",
@@ -62,5 +69,84 @@
   },
   "no_image": "Brak obrazu",
   "categories": "Kategorie",
-  "category": "Kategoria"
+  "category": "Kategoria",
+  "languages": "Języki",
+  "language": "Język",
+  "pages": "Strony",
+  "status": "Status",
+  "published_at": "Opublikowano",
+  "loading": "Ładowanie...",
+  "search": "Szukaj",
+  "admin": {
+    "actions": "Akcje",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "update": "Aktualizuj",
+    "edit": "Edytuj",
+    "create": "Utwórz",
+    "name": "Nazwa",
+    "slug": "Slug",
+    "title": "Tytuł",
+    "content": "Treść",
+    "parent": "Nadrzędny",
+    "active": "Aktywny",
+    "yes": "Tak",
+    "no": "Nie",
+    "save": "Zapisz",
+    "categories": {
+      "parent_category": "Kategoria nadrzędna (opcjonalnie)",
+      "no_parent": "Brak nadrzędnej",
+      "create": "Utwórz kategorię",
+      "edit": "Edytuj kategorię",
+      "delete": "Usuń kategorię",
+      "name": "Nazwa kategorii",
+      "save": "Zapisz kategorię",
+      "update": "Aktualizuj kategorię",
+      "confirm_delete": "Czy na pewno chcesz usunąć tę kategorię? Tej akcji nie można cofnąć."
+    },
+    "languages": {
+      "create": "Utwórz język",
+      "edit": "Edytuj język",
+      "delete": "Usuń język",
+      "code": "Kod",
+      "default": "Domyślny",
+      "native_name": "Nazwa natywna",
+      "save": "Zapisz język",
+      "update": "Aktualizuj język",
+      "confirm_delete": "Czy na pewno chcesz usunąć ten język? Tej akcji nie można cofnąć."
+    },
+    "pages": {
+      "create": "Utwórz stronę",
+      "edit": "Edytuj stronę",
+      "delete": "Usuń stronę",
+      "save": "Zapisz stronę",
+      "update": "Aktualizuj stronę",
+      "confirm_delete": "Czy na pewno chcesz usunąć tę stronę? Tej akcji nie można cofnąć.",
+      "active": "Aktywna strona"
+    },
+    "posts": {
+      "create": "Utwórz post",
+      "edit": "Edytuj post",
+      "delete": "Usuń post",
+      "save": "Zapisz post",
+      "update": "Aktualizuj post",
+      "confirm_delete": "Czy na pewno chcesz usunąć ten post? Tej akcji nie można cofnąć.",
+      "select_language": "Wybierz język"
+    }
+  },
+  "footer": {
+    "text": "Platforma treści. Wszelkie prawa zastrzeżone.",
+    "privacy_policy": "Polityka prywatności",
+    "privacy_policy_slug": "polityka-prywatnosci",
+    "terms_of_service": "Warunki korzystania z usługi",
+    "terms_of_service_slug": "warunki-korzystania-z-uslugi"
+  },
+  "privacy_policy": {
+    "title": "Polityka prywatności",
+    "content": "<h1>Polityka prywatności</h1>\n<p>Niniejsza Polityka prywatności wyjaśnia, jak zbieramy, używamy i chronimy Twoje dane podczas korzystania z naszej strony.</p>\n\n<h2>Jakie dane zbieramy</h2>\n<ul>\n  <li><strong>Dane o użyciu</strong> takie jak odwiedzane podstrony, czas spędzony w serwisie oraz informacje o urządzeniu/przeglądarce.</li>\n  <li><strong>Pliki cookie</strong> i podobne technologie w celu zapewnienia funkcjonalności i analizy ruchu.</li>\n</ul>\n\n<h2>Google Ads</h2>\n<p>Na stronie mogą być wyświetlane reklamy Google Ads. Google może używać plików cookie lub identyfikatorów urządzenia do dopasowania reklam i pomiaru ich skuteczności. Więcej informacji oraz opcje personalizacji znajdziesz w ustawieniach reklam Google.</p>\n\n<h2>W jaki sposób używamy danych</h2>\n<ul>\n  <li>Aby świadczyć i ulepszać usługi.</li>\n  <li>Aby analizować ruch i zachowania użytkowników.</li>\n  <li>Aby wyświetlać i mierzyć reklamy.</li>\n</ul>\n\n<h2>Twoje wybory</h2>\n<p>Możesz wyłączyć obsługę plików cookie w ustawieniach przeglądarki. Niektóre funkcje strony mogą wtedy nie działać poprawnie.</p>\n\n<h2>Kontakt</h2>\n<p>W razie pytań dotyczących tej polityki skontaktuj się z nami przez formularz kontaktowy na stronie.</p>"
+  },
+  "terms_of_service": {
+    "title": "Warunki korzystania z usługi",
+    "content": "<h1>Warunki korzystania z usługi</h1>\n<p>Korzystając z tej strony, akceptujesz niniejsze Warunki korzystania z usługi.</p>\n\n<h2>Korzystanie ze strony</h2>\n<ul>\n  <li>Nie nadużywaj strony i nie próbuj zakłócać jej działania.</li>\n  <li>Nie publikuj treści nielegalnych, szkodliwych lub naruszających prawa innych osób.</li>\n</ul>\n\n<h2>Własność intelektualna</h2>\n<p>Wszystkie treści na stronie są chronione prawem autorskim i innymi przepisami. Kopiowanie lub wykorzystywanie treści wymaga zgody.</p>\n\n<h2>Dostępność</h2>\n<p>Dokładamy starań, aby strona była dostępna, jednak nie gwarantujemy nieprzerwanego dostępu.</p>\n\n<h2>Zmiany</h2>\n<p>Możemy okresowo aktualizować warunki. Dalsze korzystanie ze strony oznacza akceptację zmian.</p>"
+  }
 }

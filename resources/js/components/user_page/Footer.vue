@@ -23,9 +23,19 @@ const locale = computed(() => page.props.locale as string);
                 <a class="text-slate-400 hover:text-primary transition-colors" href="https://www.youtube.com/@Devwov"><span class="material-icons-outlined">YouTube</span></a>
             </div>
             <div class="mt-6">
-                <a class="text-sm text-slate-400 hover:text-primary transition-colors" href="/privacy-policy">{{ useTrans('footer.privacy_policy') }}</a>
+                <a
+                    class="text-sm text-slate-400 hover:text-primary transition-colors"
+                    :href="`/${locale}/privacy-policy`"
+                >
+                    {{ useTrans('footer.privacy_policy') }}
+                </a>
                 <span class="mx-2 text-slate-400">|</span>
-                <a class="text-sm text-slate-400 hover:text-primary transition-colors" href="/terms-of-service">{{ useTrans('footer.terms_of_service') }}</a>
+                <a
+                    class="text-sm text-slate-400 hover:text-primary transition-colors"
+                    :href="`/${locale}/terms-of-service`"
+                >
+                    {{ useTrans('footer.terms_of_service') }}
+                </a>
             </div>
         </div>
     </footer>

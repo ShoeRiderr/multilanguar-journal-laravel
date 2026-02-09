@@ -21,6 +21,7 @@
 		"logout": "Abmelden"
 	},
 	"posts": {
+		"title": "Beiträge",
 		"no_posts": "Keine Beiträge verfügbar.",
 		"filtered_by": {
 			"recently_published": "Kürzlich veröffentlicht"
@@ -49,7 +50,13 @@
 		"published": "Veröffentlicht",
 		"link_copied": "Link in die Zwischenablage kopiert!",
 		"link_copy_failed": "Link konnte nicht kopiert werden. Bitte erneut versuchen.",
-		"estimated_read_time": "{time} Min Lesezeit"
+		"estimated_read_time": "{time} Min Lesezeit",
+		"status": {
+			"published": "Veröffentlicht",
+			"draft": "Entwurf",
+			"archived": "Archiviert"
+		},
+		"main_photo": "Hauptfoto"
 	},
 	"pagination": {
 		"previous": "Zurück",
@@ -62,5 +69,84 @@
 	},
 	"no_image": "Kein Bild",
 	"categories": "Kategorien",
-	"category": "Kategorie"
+	"category": "Kategorie",
+	"languages": "Sprachen",
+	"language": "Sprache",
+	"pages": "Seiten",
+	"status": "Status",
+	"published_at": "Veröffentlicht am",
+	"loading": "Wird geladen...",
+	"search": "Suchen",
+	"admin": {
+		"actions": "Aktionen",
+		"cancel": "Abbrechen",
+		"delete": "Löschen",
+		"update": "Aktualisieren",
+		"edit": "Bearbeiten",
+		"create": "Erstellen",
+		"name": "Name",
+		"slug": "Slug",
+		"title": "Titel",
+		"content": "Inhalt",
+		"parent": "Übergeordnet",
+		"active": "Aktiv",
+		"yes": "Ja",
+		"no": "Nein",
+		"save": "Speichern",
+		"categories": {
+			"parent_category": "Übergeordnete Kategorie (optional)",
+			"no_parent": "Keine übergeordnete",
+			"create": "Kategorie erstellen",
+			"edit": "Kategorie bearbeiten",
+			"delete": "Kategorie löschen",
+			"name": "Kategorienname",
+			"save": "Kategorie speichern",
+			"update": "Kategorie aktualisieren",
+			"confirm_delete": "Möchten Sie diese Kategorie wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+		},
+		"languages": {
+			"create": "Sprache erstellen",
+			"edit": "Sprache bearbeiten",
+			"delete": "Sprache löschen",
+			"code": "Code",
+			"default": "Standard",
+			"native_name": "Eigenname",
+			"save": "Sprache speichern",
+			"update": "Sprache aktualisieren",
+			"confirm_delete": "Möchten Sie diese Sprache wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+		},
+		"pages": {
+			"create": "Seite erstellen",
+			"edit": "Seite bearbeiten",
+			"delete": "Seite löschen",
+			"save": "Seite speichern",
+			"update": "Seite aktualisieren",
+			"confirm_delete": "Möchten Sie diese Seite wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+			"active": "Aktive Seite"
+		},
+		"posts": {
+			"create": "Beitrag erstellen",
+			"edit": "Beitrag bearbeiten",
+			"delete": "Beitrag löschen",
+			"save": "Beitrag speichern",
+			"update": "Beitrag aktualisieren",
+			"confirm_delete": "Möchten Sie diesen Beitrag wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+			"select_language": "Sprache auswählen"
+		}
+	},
+	"footer": {
+		"text": "Inhaltsplattform. Alle Rechte vorbehalten.",
+		"privacy_policy": "Datenschutzrichtlinie",
+		"privacy_policy_slug": "datenschutzrichtlinie",
+		"terms_of_service": "Nutzungsbedingungen",
+		"terms_of_service_slug": "nutzungsbedingungen"
+	},
+	"privacy_policy": {
+		"title": "Datenschutzrichtlinie",
+		"content": "<h1>Datenschutzrichtlinie</h1>\n<p>Diese Datenschutzrichtlinie erklärt, wie wir Ihre Informationen beim Besuch unserer Website erfassen, verwenden und schützen.</p>\n\n<h2>Welche Daten wir erfassen</h2>\n<ul>\n  <li><strong>Nutzungsdaten</strong> wie aufgerufene Seiten, Verweildauer sowie Geräte-/Browserinformationen.</li>\n  <li><strong>Cookies</strong> und ähnliche Technologien zur Verbesserung der Funktionalität und Analyse.</li>\n</ul>\n\n<h2>Google Ads</h2>\n<p>Wir können Anzeigen über Google Ads einblenden. Google kann Cookies oder Gerätekennungen verwenden, um relevante Anzeigen auszuspielen und deren Leistung zu messen. Weitere Informationen und Einstellungen zur Personalisierung finden Sie in den Google‑Werbeeinstellungen.</p>\n\n<h2>Wie wir Daten verwenden</h2>\n<ul>\n  <li>Zur Bereitstellung und Verbesserung unserer Dienste.</li>\n  <li>Zur Analyse von Traffic und Nutzung.</li>\n  <li>Zur Auslieferung und Messung von Werbung.</li>\n</ul>\n\n<h2>Ihre Auswahlmöglichkeiten</h2>\n<p>Sie können Cookies in den Browser‑Einstellungen deaktivieren. Einige Funktionen der Website funktionieren dann möglicherweise nicht richtig.</p>\n\n<h2>Kontakt</h2>\n<p>Bei Fragen kontaktieren Sie uns bitte über das Kontaktformular auf der Website.</p>"
+	},
+	"terms_of_service": {
+		"title": "Nutzungsbedingungen",
+		"content": "<h1>Nutzungsbedingungen</h1>\n<p>Durch die Nutzung dieser Website akzeptieren Sie diese Nutzungsbedingungen.</p>\n\n<h2>Nutzung der Website</h2>\n<ul>\n  <li>Missbrauchen Sie die Website nicht und versuchen Sie nicht, den Betrieb zu stören.</li>\n  <li>Laden Sie keine rechtswidrigen, schädlichen oder rechtsverletzenden Inhalte hoch.</li>\n</ul>\n\n<h2>Geistiges Eigentum</h2>\n<p>Alle Inhalte dieser Website sind urheberrechtlich geschützt. Eine Nutzung oder Vervielfältigung ohne Zustimmung ist nicht erlaubt.</p>\n\n<h2>Verfügbarkeit</h2>\n<p>Wir bemühen uns um eine hohe Verfügbarkeit, garantieren jedoch keinen unterbrechungsfreien Zugriff.</p>\n\n<h2>Änderungen</h2>\n<p>Wir können diese Bedingungen von Zeit zu Zeit aktualisieren. Die weitere Nutzung der Website gilt als Zustimmung.</p>"
+	}
 }
