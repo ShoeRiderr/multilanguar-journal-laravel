@@ -47,6 +47,7 @@ class CategoryController extends Controller
             'can' => [
                 'create' => Auth::user()?->can('create', Category::class),
             ],
+            'categories' => CategoryResource::collection($this->categoryService->getCategories(true)),
         ]);
     }
 
@@ -70,11 +71,23 @@ class CategoryController extends Controller
         if (request()->user()->cannot('update', $category)) {
             abort(403);
         }
+        $category->load('categoryTranslations');
         return Inertia::render('admin/categories/Edit', [
             'can' => [
                 'edit' => Auth::user()?->can('edit', Category::class),
             ],
-            'category' => $category,
+            'categories' => CategoryResource::collection($this->categoryService->getCategories(true)),
+            'category' => [
+                'id' => $category->id,
+                'parent_id' => $category->parent_id,
+                'translations' => $category->categoryTranslations->map(function ($translation) {
+                    return [
+                        'language_id' => $translation->language_id,
+                        'name' => $translation->name,
+                        'slug' => $translation->slug,
+                    ];
+                })->values(),
+            ],
         ]);
     }
 

@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Str;
 
 class PageResource extends JsonResource
 {
@@ -23,16 +22,7 @@ class PageResource extends JsonResource
             'language_id' => $translation->language_id,
             'title' => $translation->title,
             'slug' => $translation->slug,
-            'content_md' => Str::markdown($translation->content_md ?? '', [
-                'html_input' => 'strip',
-                'allow_unsafe_links' => false,
-                'heading_permalink' => [
-                    'symbol' => '#',
-                ],
-            ],
-            [
-                new \League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension(),
-            ]),
+            'content_md' => $translation->content_md,
             'is_active' => $this->is_active,
         ];
     }

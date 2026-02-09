@@ -37,8 +37,8 @@ class Post extends Model
 
     public function categories(): BelongsToMany
     {
-        $pivotTable = Schema::hasTable('category_post') ? 'category_post' : (Schema::hasTable('caategory_post') ? 'caategory_post' : 'category_post');
-        return $this->belongsToMany(Category::class, $pivotTable);
+        $pivotTable = Schema::hasTable('category_post') ? 'category_post' : (Schema::hasTable('category_post') ? 'category_post' : 'category_post');
+        return $this->belongsToMany(Category::class);
     }
 
     public function media(): MorphMany

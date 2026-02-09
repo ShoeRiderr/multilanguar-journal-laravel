@@ -62,7 +62,7 @@ export interface Post {
     content_md: string;
     status: string;
     published_at: string | null;
-    categories: Category[];
+    categories: { data: Category[] } | null;
     post_view?: PostView | null;
     main_photo?: {
         url: string | null;

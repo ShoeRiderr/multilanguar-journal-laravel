@@ -40,14 +40,6 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\Post::observe(\App\Observers\PostObserver::class);
 
         \Inertia\Inertia::share('pages', function () {
-            $route = \Illuminate\Support\Facades\Route::current();
-            $middlewares = $route ? $route->gatherMiddleware() : [];
-
-            // Only share if not using 'auth' or 'verified'
-            if (in_array('auth', $middlewares) || in_array('verified', $middlewares)) {
-                return [];
-            }
-
             $locale = app()->getLocale();
             $language = \App\Models\Language::where('code', $locale)->first();
             if (!$language) {

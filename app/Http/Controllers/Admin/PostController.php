@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
+use App\Http\Resources\CategoryResource;
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -50,6 +52,7 @@ class PostController extends Controller
             'can' => [
                 'create' => Auth::user()?->can('create', Post::class),
             ],
+            'categories' => CategoryResource::collection(Category::all()),
         ]);
     }
 
@@ -77,11 +80,13 @@ class PostController extends Controller
         if (request()->user()->cannot('update', $post)) {
             abort(403);
         }
+        $post->load(['mainPhoto', 'categories']);
         return Inertia::render('admin/posts/Edit', [
             'can' => [
                 'edit' => Auth::user()?->can('update', $post),
             ],
-            'post' => $post,
+            'post' => PostResource::make($post)->resolve(),
+            'categories' => CategoryResource::collection(Category::all()),
         ]);
     }
 

@@ -1,29 +1,28 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import { computed, watch } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
-import TextEditor from '@/components/admin/TextEditor.vue';
-import type { Language } from '@/types';
+import type { Category, Language } from '@/types';
 
-export interface PageTranslationForm {
+export interface CategoryTranslationForm {
     language_id: number;
-    title: string;
+    name: string;
     slug: string;
-    content_md: string;
 }
 
-export interface PageForm {
-    is_active: boolean;
-    translations: PageTranslationForm[];
+export interface CategoryForm {
+    parent_id: number | '';
+    translations: CategoryTranslationForm[];
 }
 
 const props = defineProps<{
     model?: {
         id?: number;
-        is_active?: boolean;
-        translations?: PageTranslationForm[];
+        parent_id?: number | null;
+        translations?: CategoryTranslationForm[];
     };
-    onSubmit: (form: ReturnType<typeof useForm<PageForm>>) => void;
+    categories?: Category[];
+    onSubmit: (form: ReturnType<typeof useForm<CategoryForm>>) => void;
     submitLabel?: string;
 }>();
 
@@ -37,25 +36,26 @@ const buildTranslations = () =>
         );
         return {
             language_id: language.id,
-            title: existing?.title ?? '',
+            name: existing?.name ?? '',
             slug: existing?.slug ?? '',
-            content_md: existing?.content_md ?? '',
         };
     });
 
-const form = useForm<PageForm>({
-    is_active: props.model?.is_active ?? true,
+const form = useForm<CategoryForm>({
+    parent_id: props.model?.parent_id ?? '',
     translations: buildTranslations(),
 });
 
 watch(
     () => props.model,
     () => {
-        form.is_active = props.model?.is_active ?? true;
+        form.parent_id = props.model?.parent_id ?? '';
         form.translations = buildTranslations();
     },
     { deep: true }
 );
+
+const parentOptions = computed(() => props.categories ?? []);
 
 const submitForm = () => {
     props.onSubmit(form);
@@ -65,11 +65,20 @@ const submitForm = () => {
 <template>
     <form @submit.prevent="submitForm" class="space-y-6">
         <div>
-            <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
-                <input v-model="form.is_active" type="checkbox" class="rounded border-slate-300" />
-                Active page
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200" for="parent_id">
+                Parent category (optional)
             </label>
-            <InputError :message="form.errors.is_active" class="mt-2" />
+            <select
+                id="parent_id"
+                v-model="form.parent_id"
+                class="mt-2 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+            >
+                <option value="">No parent</option>
+                <option v-for="option in parentOptions" :key="option.id" :value="option.id">
+                    {{ option.name || `Category #${option.id}` }}
+                </option>
+            </select>
+            <InputError :message="form.errors.parent_id" class="mt-2" />
         </div>
 
         <div class="space-y-6">
@@ -83,26 +92,20 @@ const submitForm = () => {
                 </div>
                 <div class="grid gap-4 md:grid-cols-2">
                     <div>
-                        <label
-                            class="block text-sm font-medium text-slate-700 dark:text-slate-200"
-                            :for="`title-${index}`"
-                        >
-                            Title
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200" :for="`name-${index}`">
+                            Name
                         </label>
                         <input
-                            :id="`title-${index}`"
-                            v-model="translation.title"
+                            :id="`name-${index}`"
+                            v-model="translation.name"
                             type="text"
                             class="mt-2 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none dark:border-slate-700 dark:bg-slate-900"
                             required
                         />
-                        <InputError :message="form.errors[`translations.${index}.title`]" class="mt-2" />
+                        <InputError :message="form.errors[`translations.${index}.name`]" class="mt-2" />
                     </div>
                     <div>
-                        <label
-                            class="block text-sm font-medium text-slate-700 dark:text-slate-200"
-                            :for="`slug-${index}`"
-                        >
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200" :for="`slug-${index}`">
                             Slug
                         </label>
                         <input
@@ -115,24 +118,16 @@ const submitForm = () => {
                         <InputError :message="form.errors[`translations.${index}.slug`]" class="mt-2" />
                     </div>
                 </div>
-
-                <div class="mt-4">
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Content</label>
-                    <div class="mt-2">
-                        <TextEditor v-model="translation.content_md" />
-                    </div>
-                    <InputError :message="form.errors[`translations.${index}.content_md`]" class="mt-2" />
-                </div>
             </div>
         </div>
 
-        <div class="flex items-center justify-end">
+        <div class="flex items-center justify-end gap-3">
             <button
                 type="submit"
                 class="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90"
                 :disabled="form.processing"
             >
-                {{ submitLabel || 'Save page' }}
+                {{ submitLabel || 'Save category' }}
             </button>
         </div>
     </form>

@@ -74,11 +74,23 @@ class PageController extends Controller
         if (request()->user()->cannot('update', $page)) {
             abort(403);
         }
+        $page->load('pageTranslations');
         return Inertia::render('admin/pages/Edit', [
             'can' => [
                 'edit' => Auth::user()?->can('update', $page),
             ],
-            'page' => $page,
+            'page' => [
+                'id' => $page->id,
+                'is_active' => (bool) $page->is_active,
+                'translations' => $page->pageTranslations->map(function ($translation) {
+                    return [
+                        'language_id' => $translation->language_id,
+                        'title' => $translation->title,
+                        'slug' => $translation->slug,
+                        'content_md' => $translation->content_md,
+                    ];
+                })->values(),
+            ],
         ]);
     }
 

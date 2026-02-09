@@ -1,32 +1,20 @@
 <script setup lang="ts">
-
 import { Head, usePage, useForm, router } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import Form from '@/components/admin/pages/Form.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import Form, { type LanguageForm } from '@/components/admin/languages/Form.vue';
 
-import type { PageForm } from '@/components/admin/pages/Form.vue';
-
-interface Props {
-    data: PageForm & { id: number };
-}
-
-
-const props = defineProps<Props>();
 const page = usePage();
 const locale = computed(() => page.props.locale as string);
 const dashboardUrl = computed(() => `/${locale.value}/dashboard`);
 
-function handleSubmit(form: ReturnType<typeof useForm<PageForm>>) {
-    form.put(`/${locale.value}/admin/pages/${props.data.id}`, {
+function handleSubmit(form: ReturnType<typeof useForm<LanguageForm>>) {
+    form.post(`/${locale.value}/admin/languages`, {
         onSuccess: () => {
-            router.visit(`/${locale.value}/admin/pages`)
+            router.visit(`/${locale.value}/admin/languages`);
         },
-        onError: () => {
-            // Optionally handle errors
-        }
-    })
+    });
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -40,7 +28,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 <template>
     <Head title="Create Language" />
 
-        <AppLayout :breadcrumbs="breadcrumbs">
-            <Form :model="props.data" :onSubmit="handleSubmit" submitLabel="Create Language" />
-        </AppLayout>
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <Form
+            class="p-2"
+            :onSubmit="handleSubmit"
+            submitLabel="Create Language"
+        />
+    </AppLayout>
 </template>

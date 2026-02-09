@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Models\Post;
 use App\Models\Language;
+use App\Models\Category;
 use App\UserRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -24,6 +25,9 @@ test('admin can create post with main photo', function () {
         'language_id' => $language->id,
         'status' => 'published',
         'published_at' => now(),
+        'categories' => [
+            Category::factory()->create()->id,
+        ],
         'main_photo' => $file,
     ];
     $response = $this->post(route('admin.posts.store', ['locale' => $locale]), $data);
@@ -47,7 +51,9 @@ test('admin can update post main photo', function () {
         'content_md' => $post->content_md,
         'language_id' => $post->language_id,
         'status' => $post->status,
-        'published_at' => $post->published_at->format('Y-m-d H:i:s'),
+        'published_at' => $post->published_at->format('Y-m-d H:i:s'),        'categories' => [
+            Category::factory()->create()->id,
+        ],
         'main_photo' => $file,
     ];
     $response = $this->put(route('admin.posts.update', ['post' => $post, 'locale' => $locale]), $data);

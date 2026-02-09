@@ -57,5 +57,10 @@
     "previous": "Previous",
     "next": "Next"
   },
+  "appearance": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
   "no_image": "No image"
 }

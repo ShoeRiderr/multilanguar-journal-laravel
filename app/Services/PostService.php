@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Post;
 use App\Models\Media;
 use App\PostStatus;
+use Illuminate\Http\UploadedFile;
 
 class PostService
 {
@@ -89,8 +90,13 @@ class PostService
     {
         // Extract main_photo if present
         $mainPhoto = $data['main_photo'] ?? null;
+        $categories = $data['categories'] ?? [];
         unset($data['main_photo']);
+        unset($data['categories']);
         $post = Post::create($data);
+        if (!empty($categories)) {
+            $post->categories()->sync($categories);
+        }
         if ($mainPhoto) {
             $this->saveMainPhoto($post, $mainPhoto);
         }
@@ -101,8 +107,13 @@ class PostService
     public function updatePost(Post $post, array $data): bool
     {
         $mainPhoto = $data['main_photo'] ?? null;
+        $categories = $data['categories'] ?? [];
         unset($data['main_photo']);
+        unset($data['categories']);
         $updated = $post->update($data);
+        if (!empty($categories)) {
+            $post->categories()->sync($categories);
+        }
         if ($mainPhoto) {
             $this->saveMainPhoto($post, $mainPhoto, true);
         }
@@ -112,7 +123,7 @@ class PostService
     /**
      * Save or update the main photo for a post.
      */
-    protected function saveMainPhoto(Post $post, $mainPhoto, bool $replace = false): void
+    protected function saveMainPhoto(Post $post, UploadedFile $mainPhoto, bool $replace = false): void
     {
         if ($replace && $post->mainPhoto) {
             $post->mainPhoto->delete();

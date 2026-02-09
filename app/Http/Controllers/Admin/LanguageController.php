@@ -31,7 +31,7 @@ class LanguageController extends Controller
             abort(403);
         }
         return Inertia::render('admin/languages/Index', [
-            'languages' => LanguageResource::collection($this->languageService->getLanguages()),
+            'language_list' => LanguageResource::collection($this->languageService->getLanguages()),
         ]);
     }
 

@@ -35,9 +35,13 @@ class CategoryService
         $translations = $data['translations'] ?? [];
         $parentId = $data['parent_id'] ?? null;
         $category->update(['parent_id' => $parentId]);
-        foreach ($translations as $langId => $translation) {
+        foreach ($translations as $translation) {
+            $languageId = $translation['language_id'] ?? null;
+            if (!$languageId) {
+                continue;
+            }
             $category->categoryTranslations()->updateOrCreate(
-                ['language_id' => $langId],
+                ['language_id' => $languageId],
                 $translation
             );
         }

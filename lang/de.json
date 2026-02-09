@@ -57,5 +57,10 @@
 		"previous": "Zurück",
 		"next": "Weiter"
 	},
+	"appearance": {
+		"light": "Hell",
+		"dark": "Dunkel",
+		"system": "System"
+	},
 	"no_image": "Kein Bild"
 }

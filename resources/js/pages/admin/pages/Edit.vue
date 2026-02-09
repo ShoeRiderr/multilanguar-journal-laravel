@@ -2,14 +2,16 @@
 
 import { Head, usePage, useForm, router } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import Form from '@/components/admin/pages/Form.vue';
+import Form, { type PageForm, type PageTranslationForm } from '@/components/admin/pages/Form.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 
-import type { PageForm } from '@/components/admin/pages/Form.vue';
-
 interface Props {
-    data: PageForm & { id: number };
+    page: {
+        id: number;
+        is_active: boolean;
+        translations: PageTranslationForm[];
+    };
 }
 
 const props = defineProps<Props>();
@@ -18,7 +20,7 @@ const locale = computed(() => page.props.locale as string);
 const dashboardUrl = computed(() => `/${locale.value}/dashboard`);
 
 function handleSubmit(form: ReturnType<typeof useForm<PageForm>>) {
-    form.put(`/${locale.value}/admin/pages/${props.data.id}`, {
+    form.put(`/${locale.value}/admin/pages/${props.page.id}`, {
         onSuccess: () => {
             router.visit(`/${locale.value}/admin/pages`)
         },
@@ -37,9 +39,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 </script>
 
 <template>
-    <Head title="Pages" />
+    <Head title="Edit Page" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <Form :model="props.data" :onSubmit="handleSubmit" submitLabel="Update Page" />
+        <Form
+            class="p-2"
+            :model="props.page"
+            :onSubmit="handleSubmit"
+            submitLabel="Update Page"
+        />
     </AppLayout>
 </template>

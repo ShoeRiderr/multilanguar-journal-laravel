@@ -4,6 +4,7 @@ use App\Models\User;
 use App\Models\Post;
 use App\Models\Language;
 use App\Models\PostView;
+use App\Models\Category;
 use App\UserRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -15,6 +16,7 @@ test('admin can create post with translations', function () {
     $locale = app()->getLocale();
     $this->actingAs($admin);
     $language = Language::first();
+    $categories = Category::factory()->count(2)->create();
     $data = [
         'title' => 'Test Post',
         'slug' => 'test-post',
@@ -22,10 +24,20 @@ test('admin can create post with translations', function () {
         'language_id' => $language->id,
         'status' => 'published',
         'published_at' => now(),
+        'categories' => $categories->pluck('id')->all(),
     ];
     $response = $this->post(route('admin.posts.store', ['locale' => $locale]), $data);
     $response->assertRedirect();
-    $this->assertDatabaseHas('posts', $data);
+    $postData = $data;
+    unset($postData['categories']);
+    $this->assertDatabaseHas('posts', $postData);
+    $createdPost = Post::where('slug', 'test-post')->first();
+    foreach ($categories as $category) {
+        $this->assertDatabaseHas('category_post', [
+            'post_id' => $createdPost->id,
+            'category_id' => $category->id,
+        ]);
+    }
 });
 
 test('denies access to non-admin users', function () {
@@ -78,6 +90,7 @@ test('admin can update post with translations', function () {
     $locale = app()->getLocale();
     $this->actingAs($admin);
     $post = Post::factory()->create();
+    $categories = Category::factory()->count(2)->create();
     $data = [
         'title' => 'Updated Post',
         'slug' => 'updated-post',
@@ -85,10 +98,19 @@ test('admin can update post with translations', function () {
         'language_id' => $post->language_id,
         'status' => 'published',
         'published_at' => now(),
+        'categories' => $categories->pluck('id')->all(),
     ];
     $response = $this->put(route('admin.posts.update', ['post' => $post, 'locale' => $locale]), $data);
     $response->assertRedirect();
-    $this->assertDatabaseHas('posts', $data);
+    $postData = $data;
+    unset($postData['categories']);
+    $this->assertDatabaseHas('posts', $postData);
+    foreach ($categories as $category) {
+        $this->assertDatabaseHas('category_post', [
+            'post_id' => $post->id,
+            'category_id' => $category->id,
+        ]);
+    }
 });
 
 test('admin can delete a post', function () {
