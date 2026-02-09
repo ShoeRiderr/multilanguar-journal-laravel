@@ -4,6 +4,7 @@ import { useForm, usePage } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import TextEditor from '@/components/admin/TextEditor.vue';
 import type { Language } from '@/types';
+import { useTrans } from '@/composables/trans';
 
 export interface PageTranslationForm {
     language_id: number;
@@ -67,7 +68,7 @@ const submitForm = () => {
         <div>
             <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                 <input v-model="form.is_active" type="checkbox" class="rounded border-slate-300" />
-                Active page
+                {{ useTrans('admin.pages.active') }}
             </label>
             <InputError :message="form.errors.is_active" class="mt-2" />
         </div>
@@ -87,7 +88,7 @@ const submitForm = () => {
                             class="block text-sm font-medium text-slate-700 dark:text-slate-200"
                             :for="`title-${index}`"
                         >
-                            Title
+                            {{ useTrans('admin.title') }}
                         </label>
                         <input
                             :id="`title-${index}`"
@@ -103,7 +104,7 @@ const submitForm = () => {
                             class="block text-sm font-medium text-slate-700 dark:text-slate-200"
                             :for="`slug-${index}`"
                         >
-                            Slug
+                            {{ useTrans('admin.slug') }}
                         </label>
                         <input
                             :id="`slug-${index}`"
@@ -117,7 +118,7 @@ const submitForm = () => {
                 </div>
 
                 <div class="mt-4">
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Content</label>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ useTrans('admin.content') }}</label>
                     <div class="mt-2">
                         <TextEditor v-model="translation.content_md" />
                     </div>
@@ -132,7 +133,7 @@ const submitForm = () => {
                 class="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90"
                 :disabled="form.processing"
             >
-                {{ submitLabel || 'Save page' }}
+                {{ submitLabel || useTrans('admin.pages.save') }}
             </button>
         </div>
     </form>

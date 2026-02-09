@@ -4,6 +4,7 @@ import { useForm, usePage } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import TextEditor from '@/components/admin/TextEditor.vue';
 import type { Category, Language, Post } from '@/types';
+import { useTrans } from '@/composables/trans';
 
 export interface PostForm {
     language_id: number | '';
@@ -27,9 +28,9 @@ const page = usePage();
 const languages = computed(() => (page.props.languages as Language[]) || []);
 
 const statusOptions = [
-    { label: 'Draft', value: 'draft' },
-    { label: 'Published', value: 'published' },
-    { label: 'Archived', value: 'archived' },
+    { label: useTrans('posts.status.draft'), value: 'draft' },
+    { label: useTrans('posts.status.published'), value: 'published' },
+    { label: useTrans('posts.status.archived'), value: 'archived' },
 ];
 
 const form = useForm<PostForm>({
@@ -77,12 +78,12 @@ const submitForm = () => {
         <div class="grid gap-4 md:grid-cols-2">
             <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-200" for="language_id">
-                    Language
+                    {{ useTrans('admin.language') }}
                 </label>
                 <select id="language_id" v-model="form.language_id"
                     class="mt-2 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none dark:border-slate-700 dark:bg-slate-900"
                     required>
-                    <option value="" disabled>Select language</option>
+                    <option value="" disabled>{{ useTrans('admin.posts.select_language') }}</option>
                     <option v-for="language in languages" :key="language.id" :value="language.id">
                         {{ language.name }}
                     </option>
@@ -91,7 +92,7 @@ const submitForm = () => {
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-200" for="status">
-                    Status
+                    {{ useTrans('status') }}
                 </label>
                 <select id="status" v-model="form.status"
                     class="mt-2 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none dark:border-slate-700 dark:bg-slate-900"
@@ -121,7 +122,7 @@ const submitForm = () => {
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Content</label>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ useTrans('admin.content') }}</label>
             <div class="mt-2">
                 <TextEditor v-model="form.content_md" />
             </div>
@@ -130,14 +131,14 @@ const submitForm = () => {
 
         <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">
-                Categories
+                {{ useTrans('categories') }}
             </label>
             <div class="mt-2 grid gap-2 md:grid-cols-2">
                 <label v-for="category in categoryOptions" :key="category.id"
                     class="flex items-center gap-2 rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:text-slate-200">
                     <input type="checkbox" :value="category.id" v-model="form.categories"
                         class="rounded border-slate-300" />
-                    <span>{{ category.name || `Category #${category.id}` }}</span>
+                    <span>{{ category.name || `${useTrans('category')} #${category.id}` }}</span>
                 </label>
             </div>
             <InputError :message="form.errors.categories" class="mt-2" />
@@ -146,7 +147,7 @@ const submitForm = () => {
         <div class="grid gap-4 md:grid-cols-2">
             <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-200" for="published_at">
-                    Published at
+                    {{ useTrans('published_at') }}
                 </label>
                 <input id="published_at" v-model="form.published_at" type="datetime-local"
                     class="mt-2 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none dark:border-slate-700 dark:bg-slate-900"
@@ -155,7 +156,7 @@ const submitForm = () => {
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-200" for="main_photo">
-                    Main photo
+                    {{useTrans('posts.main_photo')}}
                 </label>
                 <input id="main_photo" type="file" accept="image/*" class="mt-2 w-full text-sm text-slate-600"
                     @change="onFileChange" />
@@ -171,7 +172,7 @@ const submitForm = () => {
             <button type="submit"
                 class="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90"
                 :disabled="form.processing">
-                {{ submitLabel || 'Save post' }}
+                {{ submitLabel || useTrans('admin.posts.save') }}
             </button>
         </div>
     </form>

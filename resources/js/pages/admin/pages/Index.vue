@@ -6,6 +6,7 @@ import Pagination from '@/shared/Pagination.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { type Pages, PaginationMeta } from '@/types/index';
+import { useTrans } from '@/composables/trans';
 
 interface Props {
     pages: {
@@ -21,29 +22,29 @@ const dashboardUrl = computed(() => `/${locale.value}/dashboard`);
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Pages',
+        title: useTrans('pages'),
         href: dashboardUrl.value,
     },
 ];
 
 const deletePage = (id: number) => {
-    if (!confirm('Delete this page?')) return;
+    if (!confirm(useTrans('admin.pages.confirm_delete'))) return;
     router.delete(`/${locale.value}/admin/pages/${id}`);
 };
 </script>
 
 <template>
-    <Head title="Pages" />
+    <Head :title="useTrans('pages')" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-2">
             <div class="flex items-center justify-between">
-                <h1 class="text-xl font-semibold">Pages</h1>
+                <h1 class="text-xl font-semibold">{{ useTrans('pages') }}</h1>
                 <Link
                     class="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90"
                     :href="`/${locale}/admin/pages/create`"
                 >
-                    Create Page
+                    {{ useTrans('admin.pages.create') }}
                 </Link>
             </div>
     
@@ -51,10 +52,10 @@ const deletePage = (id: number) => {
                 <table class="min-w-full divide-y divide-slate-200 text-sm dark:divide-slate-700">
                     <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                         <tr>
-                            <th class="px-4 py-3">Title</th>
-                            <th class="px-4 py-3">Slug</th>
-                            <th class="px-4 py-3">Active</th>
-                            <th class="px-4 py-3 text-right">Actions</th>
+                            <th class="px-4 py-3">{{ useTrans('admin.title') }}</th>
+                            <th class="px-4 py-3">{{ useTrans('admin.slug') }}</th>
+                            <th class="px-4 py-3">{{ useTrans('admin.active') }}</th>
+                            <th class="px-4 py-3 text-right">{{ useTrans('admin.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
@@ -64,7 +65,7 @@ const deletePage = (id: number) => {
                             </td>
                             <td class="px-4 py-3 text-slate-600 dark:text-slate-300">{{ pageItem.slug }}</td>
                             <td class="px-4 py-3 text-slate-600 dark:text-slate-300">
-                                {{ pageItem.is_active ? 'Yes' : 'No' }}
+                                {{ pageItem.is_active ? useTrans('admin.yes') : useTrans('admin.no') }}
                             </td>
                             <td class="px-4 py-3 text-right">
                                 <div class="flex items-center justify-end gap-3">
@@ -72,14 +73,14 @@ const deletePage = (id: number) => {
                                         class="text-sm font-semibold text-primary hover:underline"
                                         :href="`/${locale}/admin/pages/${pageItem.id}/edit`"
                                     >
-                                        Edit
+                                        {{ useTrans('admin.edit') }}
                                     </Link>
                                     <button
                                         type="button"
                                         class="text-sm font-semibold text-red-600 hover:underline"
                                         @click="deletePage(pageItem.id)"
                                     >
-                                        Delete
+                                        {{ useTrans('admin.delete') }}
                                     </button>
                                 </div>
                             </td>

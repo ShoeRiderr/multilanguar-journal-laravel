@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem, type Language } from '@/types';
 import Form, { type LanguageForm } from '@/components/admin/languages/Form.vue';
+import { useTrans } from '@/composables/trans';
 
 interface Props {
     language: Language;
@@ -38,7 +39,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             class="p-2"
             :model="props.language"
             :onSubmit="handleSubmit"
-            submitLabel="Update Language"
+            :submitLabel="useTrans('admin.languages.update')"
         />
     </AppLayout>
 </template>

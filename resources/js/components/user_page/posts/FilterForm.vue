@@ -110,7 +110,7 @@ function handleReset() {
                 </h2>
                 <div class="relative">
                     <div class="grid gap-2">
-                        <Label for="search" class="sr-only">Search</Label>
+                        <Label for="search" class="sr-only">{{useTrans('search')}}</Label>
                         <Input
                             class="w-full pr-4 py-2.5 rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:placeholder-slate-500 focus:ring-primary focus:border-primary"
                             id="search" type="text" name="search" ref="searchInput" v-model="search"
@@ -121,7 +121,7 @@ function handleReset() {
             </div>
             <div class="space-y-4">
                 <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    {{ useTrans('posts.filter.category') }}
+                    {{ useTrans('category') }}
                 </h2>
                 <DropdownMenu>
                     <DropdownMenuTrigger as-child>

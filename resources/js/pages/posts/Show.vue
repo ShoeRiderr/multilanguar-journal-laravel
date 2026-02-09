@@ -133,9 +133,9 @@ const copyLink = async () => {
                 <div
                     class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-4 items-center">
                     <span class="text-sm font-bold uppercase tracking-wider text-slate-500">{{
-                        useTrans('posts.categories') }}:</span>
+                        useTrans('categories') }}:</span>
                     <div class="flex flex-wrap gap-2">
-                        <span v-for="category in post.data.categories" :key="category.id"
+                        <span v-for="category in post.data.categories?.data" :key="category.id"
                             class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full border border-primary/20">{{
                                 category.name }}</span>
                     </div>

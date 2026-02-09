@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid, Tags, Book } from 'lucide-vue-next';
+import { LayoutGrid, Tags, Languages, BookOpen, Book } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 import NavFooter from '@/components/NavFooter.vue';
@@ -41,13 +41,13 @@ const mainNavItems = computed<NavItem[]>(() => [
     {
         title: 'Languages',
         href: `/${locale.value}/admin/languages`,
-        icon: Tags,
+        icon: Languages,
         isDisplayed: isAdmin.value,
     },
     {
         title: 'Posts',
         href: `/${locale.value}/admin/posts`,
-        icon: Book,
+        icon: BookOpen,
         isDisplayed: isAdmin.value,
     },
     {

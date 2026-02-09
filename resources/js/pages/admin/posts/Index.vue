@@ -6,6 +6,7 @@ import Pagination from '@/shared/Pagination.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { type Language, type Post, PaginationMeta } from '@/types/index';
+import { useTrans } from '@/composables/trans';
 
 interface Props {
     posts: {
@@ -22,29 +23,29 @@ const dashboardUrl = computed(() => `/${locale.value}/dashboard`);
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Posts',
+        title: useTrans('posts.title'),
         href: dashboardUrl.value,
     },
 ];
 
 const deletePost = (id: number) => {
-    if (!confirm('Delete this post?')) return;
+    if (!confirm(useTrans('admin.posts.delete_confirm'))) return;
     router.delete(`/${locale.value}/admin/posts/${id}`);
 };
 </script>
 
 <template>
-    <Head title="Posts" />
+    <Head :title="useTrans('posts.title')" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-2">
             <div class="flex items-center justify-between">
-                <h1 class="text-xl font-semibold">Posts</h1>
+                <h1 class="text-xl font-semibold">{{ useTrans('posts.title') }}</h1>
                 <Link
                     class="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90"
                     :href="`/${locale}/admin/posts/create`"
                 >
-                    Create Post
+                    {{ useTrans('admin.posts.create') }}
                 </Link>
             </div>
     
@@ -52,11 +53,11 @@ const deletePost = (id: number) => {
                 <table class="min-w-full divide-y divide-slate-200 text-sm dark:divide-slate-700">
                     <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                         <tr>
-                            <th class="px-4 py-3">Title</th>
-                            <th class="px-4 py-3">Language</th>
-                            <th class="px-4 py-3">Status</th>
-                            <th class="px-4 py-3">Published</th>
-                            <th class="px-4 py-3 text-right">Actions</th>
+                            <th class="px-4 py-3">{{useTrans('posts.title')}}</th>
+                            <th class="px-4 py-3">{{useTrans('language')}}</th>
+                            <th class="px-4 py-3">{{useTrans('status')}}</th>
+                            <th class="px-4 py-3">{{useTrans('published')}}</th>
+                            <th class="px-4 py-3 text-right">{{useTrans('admin.actions')}}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
@@ -79,14 +80,14 @@ const deletePost = (id: number) => {
                                         class="text-sm font-semibold text-primary hover:underline"
                                         :href="`/${locale}/admin/posts/${post.id}/edit`"
                                     >
-                                        Edit
+                                        {{ useTrans('admin.edit') }}
                                     </Link>
                                     <button
                                         type="button"
                                         class="text-sm font-semibold text-red-600 hover:underline"
                                         @click="deletePost(post.id)"
                                     >
-                                        Delete
+                                        {{ useTrans('admin.delete') }}
                                     </button>
                                 </div>
                             </td>

@@ -29,7 +29,6 @@
     "filter": {
       "title": "Szukaj postów",
       "search_keyword": "Po tytule lub słowie kluczowym...",
-      "category": "Kategoria",
       "all_categories": "Wszystkie kategorie",
       "language": "Język treści",
       "date_range": {
@@ -42,7 +41,6 @@
       "reset": "Zresetuj wszystko"
     },
     "filter_result_description": "Wyświetlanie {count} publikacji znalezionych w bazie danych",
-    "categories": "Kategorie",
     "language": "Język",
     "back_to_posts": "Powrót do postów",
     "post_info": "Informacje o poście",
@@ -62,5 +60,7 @@
     "dark": "Ciemny",
     "system": "System"
   },
-  "no_image": "Brak obrazu"
+  "no_image": "Brak obrazu",
+  "categories": "Kategorie",
+  "category": "Kategoria"
 }

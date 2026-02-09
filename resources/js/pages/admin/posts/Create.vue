@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem, type Category } from '@/types';
 import Form, { type PostForm } from '@/components/admin/posts/Form.vue';
+import { useTrans } from '@/composables/trans';
 
 interface Props {
     categories: {
@@ -27,21 +28,21 @@ function handleSubmit(form: ReturnType<typeof useForm<PostForm>>) {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Create Post',
+        title: useTrans('admin.posts.create'),
         href: dashboardUrl.value,
     },
 ];
 </script>
 
 <template>
-    <Head title="Create Post" />
+    <Head :title="useTrans('admin.posts.create')" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <Form
             class="p-2"
             :categories="props.categories.data"
             :onSubmit="handleSubmit"
-            submitLabel="Create Post"
+            :submitLabel="useTrans('admin.posts.create')"
         />
     </AppLayout>
 </template>

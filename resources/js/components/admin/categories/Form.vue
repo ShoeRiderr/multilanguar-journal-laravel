@@ -3,6 +3,7 @@ import { computed, watch } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import type { Category, Language } from '@/types';
+import { useTrans } from '@/composables/trans';
 
 export interface CategoryTranslationForm {
     language_id: number;
@@ -66,16 +67,16 @@ const submitForm = () => {
     <form @submit.prevent="submitForm" class="space-y-6">
         <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-200" for="parent_id">
-                Parent category (optional)
+                {{ useTrans('admin.categories.parent_category') }}
             </label>
             <select
                 id="parent_id"
                 v-model="form.parent_id"
                 class="mt-2 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none dark:border-slate-700 dark:bg-slate-900"
             >
-                <option value="">No parent</option>
+                <option value="">{{ useTrans('admin.categories.no_parent') }}</option>
                 <option v-for="option in parentOptions" :key="option.id" :value="option.id">
-                    {{ option.name || `Category #${option.id}` }}
+                    {{ option.name || `${useTrans('category')} #${option.id}` }}
                 </option>
             </select>
             <InputError :message="form.errors.parent_id" class="mt-2" />
@@ -93,7 +94,7 @@ const submitForm = () => {
                 <div class="grid gap-4 md:grid-cols-2">
                     <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-200" :for="`name-${index}`">
-                            Name
+                            {{ useTrans('admin.name') }}
                         </label>
                         <input
                             :id="`name-${index}`"
@@ -106,7 +107,7 @@ const submitForm = () => {
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-200" :for="`slug-${index}`">
-                            Slug
+                            {{ useTrans('admin.slug') }}
                         </label>
                         <input
                             :id="`slug-${index}`"
@@ -127,7 +128,7 @@ const submitForm = () => {
                 class="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90"
                 :disabled="form.processing"
             >
-                {{ submitLabel || 'Save category' }}
+                {{ submitLabel || useTrans('admin.categories.save') }}
             </button>
         </div>
     </form>

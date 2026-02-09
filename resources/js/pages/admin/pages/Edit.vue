@@ -5,6 +5,7 @@ import { computed } from 'vue';
 import Form, { type PageForm, type PageTranslationForm } from '@/components/admin/pages/Form.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { useTrans } from '@/composables/trans';
 
 interface Props {
     page: {
@@ -32,21 +33,21 @@ function handleSubmit(form: ReturnType<typeof useForm<PageForm>>) {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Edit Page',
+        title: useTrans('admin.pages.edit'),
         href: dashboardUrl.value,
     },
 ];
 </script>
 
 <template>
-    <Head title="Edit Page" />
+    <Head :title="useTrans('admin.pages.edit')" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <Form
             class="p-2"
             :model="props.page"
             :onSubmit="handleSubmit"
-            submitLabel="Update Page"
+            :submitLabel="useTrans('admin.pages.update')"
         />
     </AppLayout>
 </template>

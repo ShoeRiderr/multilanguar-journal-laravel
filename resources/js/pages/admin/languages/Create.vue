@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import Form, { type LanguageForm } from '@/components/admin/languages/Form.vue';
+import { useTrans } from '@/composables/trans';
 
 const page = usePage();
 const locale = computed(() => page.props.locale as string);
@@ -32,7 +33,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         <Form
             class="p-2"
             :onSubmit="handleSubmit"
-            submitLabel="Create Language"
+            :submitLabel="useTrans('admin.languages.create')"
         />
     </AppLayout>
 </template>

@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem, type Category, type Post } from '@/types';
 import Form, { type PostForm } from '@/components/admin/posts/Form.vue';
+import { useTrans } from '@/composables/trans';
 
 interface Props {
     post: Post;
@@ -28,14 +29,14 @@ function handleSubmit(form: ReturnType<typeof useForm<PostForm>>) {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Edit Post',
+        title: useTrans('admin.posts.edit_post'),
         href: dashboardUrl.value,
     },
 ];
 </script>
 
 <template>
-    <Head title="Edit Post" />
+    <Head :title="useTrans('admin.posts.edit_post')" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <Form
@@ -43,7 +44,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             :model="props.post"
             :categories="props.categories.data"
             :onSubmit="handleSubmit"
-            submitLabel="Update Post"
+            :submitLabel="useTrans('admin.posts.update')"
         />
     </AppLayout>
 </template>

@@ -5,6 +5,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem, type Category } from '@/types';
 import Form, { type CategoryForm } from '@/components/admin/categories/Form.vue';
 import type { CategoryTranslationForm } from '@/components/admin/categories/Form.vue';
+import { useTrans } from '@/composables/trans';
 
 interface Props {
     category: {
@@ -32,14 +33,14 @@ function handleSubmit(form: ReturnType<typeof useForm<CategoryForm>>) {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Edit Category',
+        title: useTrans('admin.edit_category'),
         href: dashboardUrl.value,
     },
 ];
 </script>
 
 <template>
-    <Head title="Edit Category" />
+    <Head :title="useTrans('admin.edit_category')" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <Form
@@ -47,7 +48,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             :model="props.category"
             :categories="props.categories.data"
             :onSubmit="handleSubmit"
-            submitLabel="Update Category"
+            :submitLabel="useTrans('admin.categories.update')"
         />
     </AppLayout>
 </template>

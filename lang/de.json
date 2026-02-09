@@ -29,7 +29,6 @@
 		"filter": {
 			"title": "Beiträge suchen",
 			"search_keyword": "Nach Titel oder Stichwort...",
-			"category": "Kategorie",
 			"all_categories": "Alle Kategorien",
 			"language": "Inhaltssprache",
 			"date_range": {
@@ -42,7 +41,6 @@
 			"reset": "Alles zurücksetzen"
 		},
 		"filter_result_description": "{count} Veröffentlichungen in der Datenbank gefunden",
-		"categories": "Kategorien",
 		"language": "Sprache",
 		"back_to_posts": "Zurück zu Beiträgen",
 		"post_info": "Beitragsinfo",
@@ -62,5 +60,7 @@
 		"dark": "Dunkel",
 		"system": "System"
 	},
-	"no_image": "Kein Bild"
+	"no_image": "Kein Bild",
+	"categories": "Kategorien",
+	"category": "Kategorie"
 }

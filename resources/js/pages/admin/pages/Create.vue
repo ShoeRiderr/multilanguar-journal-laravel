@@ -5,6 +5,7 @@ import { computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import Form, { type PageForm } from '@/components/admin/pages/Form.vue';
 import { type BreadcrumbItem } from '@/types';
+import { useTrans } from '@/composables/trans';
 
 const page = usePage();
 const locale = computed(() => page.props.locale as string);
@@ -20,7 +21,7 @@ function handleSubmit(form: ReturnType<typeof useForm<PageForm>>) {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Create Page',
+        title: useTrans('admin.pages.create'),
         href: dashboardUrl.value,
     },
 ];
@@ -28,13 +29,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 
 <template>
-    <Head title="Create Page" />
+    <Head :title="useTrans('admin.pages.create')" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <Form
             class="p-2"
             :onSubmit="handleSubmit"
-            submitLabel="Create Page"
+            :submitLabel="useTrans('admin.pages.create')"
         />
     </AppLayout>
 </template>
