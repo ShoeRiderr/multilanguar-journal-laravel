@@ -1,0 +1,114 @@
+name: Deploy to DigitalOcean
+
+# Automatyczny deployment na DigitalOcean Droplet po push do main branch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # ==========================================
+  # Job 1: Build and Test
+  # ==========================================
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_mysql, zip, gd, intl, opcache, redis
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Copy .env for testing
+        run: cp .env.example .env
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Create SQLite database
+        run: touch database/database.sqlite
+
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      - name: Run tests
+        run: php artisan test
+
+  # ==========================================
+  # Job 2: Deploy to DigitalOcean
+  # ==========================================
+  deploy:
+    name: Deploy to Production
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy to DigitalOcean Droplet
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Przejdź do katalogu projektu
+            cd /var/www/journal
+            
+            # Pull najnowszych zmian z Git
+            echo "📥 Pulling latest changes..."
+            git pull origin main
+            
+            # Stop i usuń istniejące kontenery
+            echo "🛑 Stopping containers..."
+            docker compose down
+            
+            # Rebuild kontenerów bez cache
+            echo "🔨 Building containers..."
+            docker compose build --no-cache
+            
+            # Uruchomienie kontenerów w tle
+            echo "🚀 Starting containers..."
+            docker compose up -d
+            
+            # Czekaj na uruchomienie MySQL
+            echo "⏳ Waiting for services to start..."
+            sleep 10
+            
+            # Uruchom migracje
+            echo "📊 Running migrations..."
+            docker compose exec -T app php artisan migrate --force
+            
+            # Optimizacja i cache
+            echo "⚡ Optimizing application..."
+            docker compose exec -T app php artisan config:cache
+            docker compose exec -T app php artisan route:cache
+            docker compose exec -T app php artisan view:cache
+            docker compose exec -T app php artisan optimize
+            
+            # Restart kolejek
+            echo "🔄 Restarting queues..."
+            docker compose exec -T app php artisan queue:restart
+            
+            echo "✅ Deployment completed successfully!"
