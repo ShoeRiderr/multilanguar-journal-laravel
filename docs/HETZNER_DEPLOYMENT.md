@@ -766,6 +766,54 @@ df -h
 du -sh /var/lib/docker
 ```
 
+### Problem: Wayfinder - "php: not found" podczas buildu
+
+**Objawy:**
+```
+[@laravel/vite-plugin-wayfinder] Error: Command failed: php artisan wayfinder:generate
+/bin/sh: php: not found
+```
+
+**Wyjaśnienie:**
+Wayfinder plugin próbuje wygenerować TypeScript types z Laravel routes podczas `npm run build`. 
+Wymaga to dostępu do PHP i działającej aplikacji Laravel.
+
+**Rozwiązanie:**
+W `vite.config.ts` dodano opcję `skipGeneration: process.env.SKIP_WAYFINDER === 'true'`.
+
+Podczas Docker build (gdzie nie ma PHP), generowanie jest pomijane.
+Po uruchomieniu kontenera (gdzie PHP jest dostępny), routes są generowane przez:
+```bash
+docker compose exec app php artisan wayfinder:generate --with-form
+```
+
+**Ręczne wygenerowanie routes:**
+```bash
+# Po każdej zmianie w routes
+docker compose exec app php artisan wayfinder:generate --with-form
+
+# Lub użyj Makefile
+make wayfinder
+```
+
+Routes są generowane automatycznie przez `deploy.sh`.
+
+### Problem: Brak route types w TypeScript
+
+**Rozwiązanie:**
+Upewnij się, że Wayfinder routes zostały wygenerowane:
+```bash
+docker compose exec app php artisan wayfinder:generate --with-form
+
+# Sprawdź czy plik został utworzony
+docker compose exec app ls -la resources/js/types/generated.d.ts
+```
+
+Jeśli lokalnie pracujesz bez Dockera:
+```bash
+php artisan wayfinder:generate --with-form
+```
+
 ## 📚 Dodatkowe zasoby
 
 - [Laravel Documentation](https://laravel.com/docs)

@@ -14,6 +14,9 @@ export default defineConfig({
         tailwindcss(),
         wayfinder({
             formVariants: true,
+            // Skip generowania route types gdy PHP nie jest dostępne (np. w Docker build)
+            // Routes będą wygenerowane po deploymencie przez: php artisan wayfinder:generate
+            skipGeneration: process.env.SKIP_WAYFINDER === 'true',
         }),
         vue({
             template: {

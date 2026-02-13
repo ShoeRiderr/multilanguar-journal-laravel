@@ -25,11 +25,27 @@ docker compose exec app php artisan key:generate
 # 5. Uruchom migracje
 docker compose exec app php artisan migrate
 
-# 6. (Opcjonalnie) Zaseed'uj bazę danych
+# 6. Wygeneruj Wayfinder routes (dla TypeScript types)
+docker compose exec app php artisan wayfinder:generate --with-form
+
+# 7. (Opcjonalnie) Zaseed'uj bazę danych
 docker compose exec app php artisan db:seed
 ```
 
 Aplikacja dostępna na: **http://localhost**
+
+### Development z hot reload
+
+```bash
+# Terminal 1 - Backend (Docker)
+docker compose up -d
+
+# Terminal 2 - Frontend (Vite dev server)
+npm install
+npm run dev
+```
+
+Vite dev server automatycznie wygeneruje Wayfinder routes gdy PHP jest dostępne.
 
 ### Alternatywnie: Używając Makefile
 
