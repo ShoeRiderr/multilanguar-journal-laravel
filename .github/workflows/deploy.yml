@@ -1,0 +1,129 @@
+name: Deploy to Hetzner Cloud
+
+# Automatyczny deployment na Hetzner CX23 po każdym pushu do main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # Job 1: Build and Test
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, mbstring, pdo, zip
+          coverage: none
+
+      - name: Copy .env
+        run: |
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+          php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Run database migrations
+        run: php artisan migrate --force
+
+      - name: Run tests
+        run: php artisan test
+
+  # Job 2: Deploy to Hetzner Cloud
+  deploy:
+    name: Deploy to Hetzner
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HETZNER_HOST }}
+          username: ${{ secrets.HETZNER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Przejdź do katalogu projektu
+            cd ~/multilanguar-journal-laravel
+            
+            # Pull najnowszych zmian
+            echo "📥 Pulling latest changes..."
+            git pull origin main
+            
+            # Zatrzymaj kontenery
+            echo "🛑 Stopping containers..."
+            docker compose down
+            
+            # Zbuduj nowy obraz aplikacji
+            echo "🔨 Building application image..."
+            docker compose build --no-cache app
+            
+            # Uruchom kontenery
+            echo "🚀 Starting containers..."
+            docker compose up -d
+            
+            # Poczekaj na MySQL
+            echo "⏳ Waiting for MySQL to be ready..."
+            timeout 60 sh -c 'until docker compose exec -T mysql mysqladmin ping -h localhost --silent; do sleep 2; done'
+            
+            if [ $? -eq 0 ]; then
+              echo "✅ MySQL is ready!"
+            else
+              echo "❌ MySQL failed to start"
+              exit 1
+            fi
+            
+            # Uruchom migracje
+            echo "🔄 Running database migrations..."
+            docker compose exec -T app php artisan migrate --force
+            
+            # Optymalizacja Laravel
+            echo "⚡ Optimizing Laravel..."
+            docker compose exec -T app php artisan optimize
+            docker compose exec -T app php artisan config:cache
+            docker compose exec -T app php artisan route:cache
+            docker compose exec -T app php artisan view:cache
+            
+            # Restart queue workers
+            echo "🔄 Restarting queue workers..."
+            docker compose exec -T app php artisan queue:restart
+            
+            # Czyszczenie
+            echo "🧹 Cleaning up old Docker images..."
+            docker system prune -f
+            
+            # Pokaż status
+            echo "✅ Deployment complete!"
+            docker compose ps
+
+      - name: Deployment Status
+        if: success()
+        run: echo "🎉 Deployment to Hetzner Cloud successful!"
+
+      - name: Deployment Failed
+        if: failure()
+        run: echo "❌ Deployment to Hetzner Cloud failed!"

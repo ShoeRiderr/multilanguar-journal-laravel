@@ -1,0 +1,60 @@
+# Ignoruj node_modules i vendor
+node_modules
+vendor
+
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# Storage files
+storage/logs/*
+!storage/logs/.gitkeep
+storage/framework/cache/*
+!storage/framework/cache/.gitkeep
+storage/framework/sessions/*
+!storage/framework/sessions/.gitkeep
+storage/framework/views/*
+!storage/framework/views/.gitkeep
+storage/app/public/*
+!storage/app/public/.gitkeep
+
+# Vite development files
+public/hot
+public/build
+public/storage
+
+# Test files
+tests
+phpunit.xml
+.phpunit.*
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Docker files
+docker-compose.override.yml
+*.log
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
+docs
+*.md
+!README.md
