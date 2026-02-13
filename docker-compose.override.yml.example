@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Docker Compose Override - przykładowa konfiguracja dla lokalnego developmentu
 # Skopiuj ten plik do docker-compose.override.yml i dostosuj do swoich potrzeb
 # UWAGA: docker-compose.override.yml jest automatycznie ładowany i NIE powinien być commitowany do repozytorium

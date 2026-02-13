@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Konfiguracja Docker Compose dla Laravel 12 + Inertia + Vue 3
 # Zoptymalizowane dla Hetzner Cloud CX23 (8GB RAM)
 
