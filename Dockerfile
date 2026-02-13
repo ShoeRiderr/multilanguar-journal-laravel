@@ -59,11 +59,11 @@ RUN npm ci --only=production=false
 # Kopiowanie kodu źródłowego
 COPY . .
 
-# KLUCZOWE: Ustaw SKIP_WAYFINDER=true przed buildem
-# Wayfinder nie będzie próbował uruchomić PHP artisan
+# IMPORTANT: Set SKIP_WAYFINDER=true before build
+# Wayfinder will not try to run PHP artisan
 ENV SKIP_WAYFINDER=true
 
-# Budowanie assetów z Vite - teraz zadziała!
+# Build assets with Vite - will now work!
 RUN npm run build
 
 # Stage 3: Production - finalna aplikacja

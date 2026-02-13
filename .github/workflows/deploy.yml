@@ -43,7 +43,7 @@ jobs:
       - name: Install NPM dependencies
         run: npm ci
 
-      - name: Generate Wayfinder routes (PHP dostępne w CI)
+      - name: Generate Wayfinder routes (PHP available in CI)
         run: php artisan wayfinder:generate --with-form
 
       - name: Build assets
