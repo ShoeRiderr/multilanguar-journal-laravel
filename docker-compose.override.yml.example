@@ -1,0 +1,71 @@
+# Docker Compose Override - przykładowa konfiguracja dla lokalnego developmentu
+# Skopiuj ten plik do docker-compose.override.yml i dostosuj do swoich potrzeb
+# UWAGA: docker-compose.override.yml jest automatycznie ładowany i NIE powinien być commitowany do repozytorium
+
+services:
+  # PHP Application - dodatkowa konfiguracja dla developmentu
+  app:
+    volumes:
+      # Mount kodu źródłowego dla live reload
+      - ./:/var/www/html
+    environment:
+      # Włącz Xdebug dla debugowania
+      - XDEBUG_MODE=develop,debug
+      - XDEBUG_CONFIG=client_host=host.docker.internal
+    # Nie używaj limitu pamięci w dev
+    deploy:
+      resources:
+        limits:
+          memory: 0
+
+  # MySQL - expose port dla lokalnych narzędzi (np. TablePlus, MySQL Workbench)
+  mysql:
+    ports:
+      - "3306:3306"  # Dostęp z localhost:3306
+    # Bez limitu pamięci w dev
+    deploy:
+      resources:
+        limits:
+          memory: 0
+
+  # Nginx - bez limitu pamięci w dev
+  nginx:
+    deploy:
+      resources:
+        limits:
+          memory: 0
+
+  # Redis - expose port dla lokalnych narzędzi (np. Redis Desktop Manager)
+  redis:
+    ports:
+      - "6379:6379"  # Dostęp z localhost:6379
+    deploy:
+      resources:
+        limits:
+          memory: 0
+
+  # Mailhog - lokalne testowanie emaili (opcjonalnie)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: journal_mailhog
+    ports:
+      - "1025:1025"  # SMTP server
+      - "8025:8025"  # Web UI - http://localhost:8025
+    networks:
+      - app-network
+
+  # PHPMyAdmin - opcjonalny GUI dla MySQL (opcjonalnie)
+  # phpmyadmin:
+  #   image: phpmyadmin:latest
+  #   container_name: journal_phpmyadmin
+  #   environment:
+  #     - PMA_HOST=mysql
+  #     - PMA_PORT=3306
+  #     - PMA_USER=root
+  #     - PMA_PASSWORD=${DB_PASSWORD:-secret}
+  #   ports:
+  #     - "8080:80"  # http://localhost:8080
+  #   networks:
+  #     - app-network
+  #   depends_on:
+  #     - mysql
