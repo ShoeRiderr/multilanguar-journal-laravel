@@ -1,37 +1,62 @@
-# Multi-stage Dockerfile zoptymalizowany dla Hetzner CX23 (8GB RAM)
+# Simplified Dockerfile for Hetzner CX23 (8GB RAM)
 # Laravel 12 + Inertia.js + Vue 3 + TypeScript
+#
+# IMPORTANT: Assets MUST be built on the host BEFORE running docker build!
+# This is required because Wayfinder needs access to PHP (via docker compose exec)
+# to generate TypeScript types during the asset build process.
+#
+# Build flow:
+# 1. docker compose up -d app mysql  # Start backend (PHP available)
+# 2. npm run build                   # Build assets on host
+# 3. docker compose build app        # Build this image (copies public/build)
+#
+# Or simply run: ./deploy.sh
 
-# Stage 1: Base - PHP 8.2 z rozszerzeniami
-FROM php:8.2-fpm-alpine AS base
+# Stage 1: Composer dependencies
+FROM composer:latest AS composer-deps
 
-# Instalacja zależności systemowych i rozszerzeń PHP
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install \
+    --no-dev \
+    --no-scripts \
+    --no-autoloader \
+    --prefer-dist \
+    --optimize-autoloader
+
+# Stage 2: Production - PHP-FPM
+FROM php:8.2-fpm-alpine
+
+# Instaluj zależności systemowe
 RUN apk add --no-cache \
-    mysql-client \
-    postgresql-dev \
+    git \
+    curl \
+    libzip-dev \
     libpng-dev \
     libjpeg-turbo-dev \
     freetype-dev \
-    libzip-dev \
-    icu-dev \
     oniguruma-dev \
+    libxml2-dev \
+    icu-dev \
+    postgresql-dev \
     zip \
     unzip \
-    git \
-    curl
+    mysql-client \
+    bash
 
-# Konfiguracja i instalacja rozszerzeń PHP
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install \
+# Instaluj rozszerzenia PHP
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install \
         pdo_mysql \
         pdo_pgsql \
-        zip \
-        gd \
-        intl \
-        opcache \
-        bcmath \
         mbstring \
         exif \
-        pcntl
+        pcntl \
+        bcmath \
+        gd \
+        zip \
+        intl \
+        opcache
 
 # Instalacja Redis extension
 RUN apk add --no-cache $PHPIZE_DEPS \
@@ -39,57 +64,33 @@ RUN apk add --no-cache $PHPIZE_DEPS \
     && docker-php-ext-enable redis \
     && apk del $PHPIZE_DEPS
 
-# Instalacja Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Ustawienie katalogu roboczego
-WORKDIR /var/www/html
-
-# Stage 2: Node - budowanie assetów
-FROM node:20-alpine AS node
-
-WORKDIR /app
-
-# Kopiowanie plików package
-COPY package*.json ./
-
-# Instalacja zależności Node
-RUN npm ci --only=production=false
-
-# Kopiowanie kodu źródłowego
-COPY . .
-
-# IMPORTANT: Set SKIP_WAYFINDER=true before build
-# Wayfinder will not try to run PHP artisan
-ENV SKIP_WAYFINDER=true
-
-# Build assets with Vite - will now work!
-RUN npm run build
-
-# Stage 3: Production - finalna aplikacja
-FROM base AS production
-
-# Kopiowanie konfiguracji PHP
+# Konfiguracja PHP
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
 
-# Kopiowanie kodu aplikacji
+# Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Workdir
+WORKDIR /var/www/html
+
+# Kopiuj vendor z stage 1
+COPY --from=composer-deps /app/vendor /var/www/html/vendor
+
+# Kopiuj całą aplikację (łącznie z public/build zbudowanym NA HOŚCIE)
 COPY --chown=www-data:www-data . /var/www/html
 
-# Instalacja zależności Composer (bez dev, z optymalizacją)
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+# Autoloader
+RUN composer dump-autoload --optimize --no-dev
 
-# Kopiowanie zbudowanych assetów z stage Node
-COPY --from=node --chown=www-data:www-data /app/public/build /var/www/html/public/build
+# Uprawnienia dla Laravel
+RUN mkdir -p storage/framework/{cache,sessions,views} \
+    storage/logs \
+    bootstrap/cache && \
+    chown -R www-data:www-data storage bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache
 
-# Ustawienie uprawnień dla storage i bootstrap/cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Przełączenie na użytkownika www-data
 USER www-data
 
-# Expose port dla PHP-FPM
 EXPOSE 9000
 
-# Komenda startowa
 CMD ["php-fpm"]

@@ -12,6 +12,38 @@ Kompletny przewodnik krok po kroku do uruchomienia aplikacji Laravel 12 + Inerti
 6. [Monitorowanie i maintenance](#część-6-monitorowanie-i-maintenance)
 7. [Optymalizacje i bezpieczeństwo](#część-7-optymalizacje-i-bezpieczeństwo)
 
+---
+
+## 🏗️ Jak działa build assetów
+
+### Tradycyjne podejście (nie działa z Wayfinder):
+```
+docker build → npm run build (w kontenerze Node)
+  ↓
+❌ Wayfinder próbuje uruchomić: php artisan
+❌ PHP nie jest dostępne w kontenerze Node
+❌ Build pada
+```
+
+### Nasze rozwiązanie (działa!):
+```
+1. docker compose up -d app mysql  # Backend UP (PHP dostępne!)
+2. npm run build                   # Build NA HOŚCIE
+   ↓
+   Wayfinder uruchamia: docker compose exec app php artisan
+   ✅ PHP dostępne w działającym kontenerze!
+3. docker compose build app        # Kopiuje zbudowane public/build
+4. docker compose up -d            # Restart z nowymi assetami
+```
+
+### Kluczowe różnice:
+- ✅ Backend działa PRZED buildem → Wayfinder ma dostęp do PHP
+- ✅ Build na hoście → może użyć `docker compose exec`
+- ✅ Dockerfile tylko kopiuje → szybki rebuild
+- ✅ Assety są w repo po buildzie → volume mapping działa
+
+---
+
 ## 💰 Koszty
 
 - **Serwer Hetzner CX23**: ~€5.74/mies (~$6.20/mies)
@@ -146,7 +178,19 @@ rsync --archive --chown=deploy:deploy ~/.ssh /home/deploy/
 su - deploy
 ```
 
-### 2.6. Clone repozytorium
+### 2.6. Instalacja Node.js (potrzebny do buildu assetów)
+
+```bash
+# Zainstaluj Node.js 20.x
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt-get install -y nodejs
+
+# Sprawdź wersję
+node --version
+npm --version
+```
+
+### 2.7. Clone repozytorium
 
 ```bash
 # Przejdź do katalogu domowego
@@ -225,17 +269,41 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -subj "/C=PL/ST=Mazowieckie/L=Warsaw/O=Development/CN=localhost"
 ```
 
-### 3.4. Build i uruchomienie kontenerów
+### 3.4. Deploy aplikacji (z buildem assetów)
+
+**WAŻNE:** Używamy nowego flow z buildem assetów NA HOŚCIE:
 
 ```bash
-# Build obrazu aplikacji
-docker compose build app
+# 1. Uruchom backend (potrzebny dla Wayfinder podczas buildu)
+docker compose up -d app mysql redis
 
-# Uruchom wszystkie kontenery w tle
+# 2. Poczekaj na MySQL
+echo "Waiting for MySQL..."
+sleep 15
+
+# 3. Zainstaluj Node dependencies
+npm ci
+
+# 4. Zbuduj assety NA HOŚCIE (Wayfinder może użyć docker compose exec)
+npm run build
+
+# 5. Sprawdź czy build się udał
+ls -la public/build/
+
+# 6. Rebuild Docker image (kopiuje zbudowane assety)
+docker compose build --no-cache app
+
+# 7. Uruchom wszystkie kontenery
 docker compose up -d
 
-# Sprawdź status kontenerów
+# 8. Sprawdź status kontenerów
 docker compose ps
+```
+
+**Alternatywnie:** Użyj skryptu `deploy.sh` który robi wszystko automatycznie:
+
+```bash
+./deploy.sh
 ```
 
 Wszystkie kontenery powinny być w stanie "Up" i "healthy".
@@ -714,6 +782,43 @@ sudo sysctl -p
 - [ ] Fail2ban włączony
 
 ## 🆘 Pomoc i troubleshooting
+
+### Problem: npm run build pada - "docker compose exec: command not found"
+
+**Przyczyna:** Backend nie jest uruchomiony, więc Vite nie może użyć `docker compose exec app php artisan`.
+
+**Rozwiązanie:**
+```bash
+# Uruchom backend PRZED buildem
+docker compose up -d app mysql
+npm run build
+```
+
+### Problem: "public/build not found" po deploy
+
+**Przyczyna:** Build assetów nie udał się.
+
+**Rozwiązanie:**
+```bash
+# Zbuduj ręcznie i sprawdź błędy
+docker compose up -d app mysql
+npm ci
+npm run build
+
+# Sprawdź czy public/build istnieje
+ls -la public/build/
+```
+
+### Problem: Stare assety po deploymencie
+
+**Rozwiązanie:**
+```bash
+# Wyczyść cache przeglądarki
+# LUB
+# Rebuild z --no-cache
+docker compose build --no-cache app
+docker compose up -d
+```
 
 ### Problem: Kontener się nie uruchamia
 
