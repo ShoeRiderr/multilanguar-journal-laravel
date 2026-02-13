@@ -15,7 +15,7 @@ docker compose up -d app mysql redis
 # 3. Poczekaj na MySQL
 echo "⏳ Waiting for MySQL to be ready..."
 until docker compose exec -T mysql mysqladmin ping -h localhost --silent 2>/dev/null; do
-    echo "   MySQL is unavailable - sleeping"
+    echo "MySQL is unavailable - sleeping"
     sleep 2
 done
 echo "✅ MySQL is up!"

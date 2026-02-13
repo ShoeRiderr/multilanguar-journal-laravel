@@ -8,8 +8,6 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
-      # Assets zbudowane na hoście są dostępne przez volume
-      - ./public/build:/var/www/html/public/build
     environment:
       DB_HOST: mysql
       DB_DATABASE: ${DB_DATABASE:-journal_db}

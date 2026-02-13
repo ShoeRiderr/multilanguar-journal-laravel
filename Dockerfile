@@ -1,6 +1,16 @@
 # Simplified Dockerfile for Hetzner CX23 (8GB RAM)
 # Laravel 12 + Inertia.js + Vue 3 + TypeScript
-# Assets are built ON THE HOST before Docker build
+#
+# IMPORTANT: Assets MUST be built on the host BEFORE running docker build!
+# This is required because Wayfinder needs access to PHP (via docker compose exec)
+# to generate TypeScript types during the asset build process.
+#
+# Build flow:
+# 1. docker compose up -d app mysql  # Start backend (PHP available)
+# 2. npm run build                   # Build assets on host
+# 3. docker compose build app        # Build this image (copies public/build)
+#
+# Or simply run: ./deploy.sh
 
 # Stage 1: Composer dependencies
 FROM composer:latest AS composer-deps
