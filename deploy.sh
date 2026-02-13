@@ -61,7 +61,9 @@ docker compose exec -T app php artisan wayfinder:generate --with-form || echo "�
 
 # Restart queue workers
 echo "🔄 Restarting queue workers..."
-docker compose exec -T app php artisan queue:restart || true
+if ! docker compose exec -T app php artisan queue:restart; then
+    echo "⚠️ Warning: Queue restart failed or no workers running"
+fi
 
 # Czyszczenie starych obrazów Docker
 echo "🧹 Cleaning up old Docker images..."

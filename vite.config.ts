@@ -14,7 +14,7 @@ export default defineConfig({
         // Wayfinder tylko w dev (nie w Docker build)
         // W Docker build PHP nie jest dostępne
         ...(process.env.SKIP_WAYFINDER !== 'true' ? [
-            (await import('@laravel/vite-plugin-wayfinder')).default({
+            (await import('@laravel/vite-plugin-wayfinder')).wayfinder({
                 formVariants: true,
             })
         ] : []),

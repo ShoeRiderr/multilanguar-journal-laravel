@@ -62,7 +62,7 @@ logs-nginx: ## Pokaż logi Nginx
 logs-mysql: ## Pokaż logi MySQL
 	docker compose logs -f mysql
 
-shell: ## Wejdź do kontenera app (bash/sh)
+shell: ## Wejdź do kontenera app (sh)
 	docker compose exec app sh
 
 mysql: ## Wejdź do konsoli MySQL
