@@ -4,17 +4,36 @@ Szybki przewodnik dla projektu Multilingual Journal.
 
 ## 🚀 Pierwsze uruchomienie
 
+### Opcja 1: Development mode (z Vite hot reload)
+
 ```bash
 # 1. Skopiuj .env
 cp .env.example .env
 
-# 2. Uruchom kontenery
-docker compose up -d
+# 2. Uruchom w trybie dev
+make dev
 
-# 3. Wygeneruj klucz aplikacji
+# 3. Setup aplikacji
 docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate
 
-# 4. Uruchom migracje
+# Gotowe! 
+# Aplikacja: http://localhost
+# Vite dev: http://localhost:5173
+```
+
+### Opcja 2: Production mode
+
+```bash
+# 1. Skopiuj .env
+cp .env.example .env
+
+# 2. Zbuduj assety i uruchom
+make build
+make prod
+
+# 3. Setup aplikacji
+docker compose exec app php artisan key:generate
 docker compose exec app php artisan migrate
 
 # Gotowe! Aplikacja dostępna na http://localhost
@@ -23,11 +42,44 @@ docker compose exec app php artisan migrate
 ## 📦 Używanie Makefile
 
 ```bash
-make install    # Pełna instalacja (build + up + migrate)
-make help       # Wszystkie dostępne komendy
-make logs       # Zobacz logi
-make shell      # Wejdź do kontenera
-make test       # Uruchom testy
+make dev         # Development mode z hot reload
+make prod        # Production mode
+make build       # Zbuduj assety + Docker image
+make assets      # Zbuduj tylko assety (npm)
+make help        # Wszystkie dostępne komendy
+make logs        # Zobacz logi
+make shell       # Wejdź do kontenera
+make test        # Uruchom testy
+```
+
+## ⚙️ Strategia budowania assetów
+
+**WAŻNE:** Assety frontend (Vite build) są budowane **NA HOŚCIE**, nie w Dockerze.
+
+### Dlaczego?
+
+Plugin `@laravel/vite-plugin-wayfinder` wymaga PHP do generowania route types. W Docker multi-stage build Node stage nie ma PHP, więc build zawodzi.
+
+### Rozwiązanie:
+
+1. **Development:** Vite dev server w osobnym kontenerze (`make dev`)
+2. **Production:** Build assetów na hoście przed dockerem (`make build` lub `npm run build`)
+
+### Workflow produkcyjny:
+
+```bash
+# 1. Build assetów (na hoście, gdzie PHP jest dostępne)
+npm ci
+npm run build
+
+# 2. Build Docker image (kopiuje gotowe assety)
+docker compose build app
+
+# 3. Uruchom
+docker compose up -d
+
+# 4. Wygeneruj Wayfinder routes (w kontenerze z PHP)
+docker compose exec app php artisan wayfinder:generate --with-form
 ```
 
 ## 🛠 Podstawowe komendy
@@ -56,12 +108,14 @@ docker compose exec mysql mysql -u root -p
 
 ## 📁 Struktura
 
-- `Dockerfile` - Multi-stage build aplikacji
-- `docker-compose.yml` - Definicja serwisów
+- `Dockerfile` - Uproszczony build aplikacji (bez Node)
+- `Dockerfile.with-assets` - Opcjonalny build z assetami w Dockerze
+- `docker-compose.yml` - Definicja serwisów (produkcja)
+- `docker-compose.dev.yml` - Nadpisanie dla development (Vite dev)
 - `docker/nginx/` - Konfiguracja Nginx
 - `docker/mysql/` - Optymalizacje MySQL  
 - `docker/php/` - Konfiguracja PHP
-- `deploy.sh` - Skrypt deploymentu
+- `deploy.sh` - Skrypt deploymentu (buduje assety + Docker)
 - `Makefile` - Skróty komend
 
 ## 🐳 Serwisy
@@ -86,6 +140,23 @@ cp docker-compose.override.yml.example docker-compose.override.yml
 - **make help** - Lista wszystkich komend
 
 ## 🆘 Troubleshooting
+
+### Problem: Vite build errors podczas Docker build
+
+**Objawy:** `php: not found` lub błędy Wayfinder podczas `npm run build`
+
+**Rozwiązanie:**
+```bash
+# Assety MUSZĄ być zbudowane NA HOŚCIE, nie w Dockerze
+npm ci
+npm run build
+
+# Sprawdź czy build się udał
+ls -la public/build/
+
+# Potem uruchom Docker
+docker compose up -d
+```
 
 ### Port zajęty
 ```bash
