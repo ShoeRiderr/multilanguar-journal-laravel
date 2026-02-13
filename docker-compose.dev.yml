@@ -1,0 +1,23 @@
+# Docker Compose dla lokalnego developmentu z Vite hot reload
+# 
+# Użycie: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# Lub użyj: make dev
+
+services:
+  app:
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    
+  # Vite dev server (hot reload)
+  vite:
+    image: node:20-alpine
+    container_name: journal_vite
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - "5173:5173"
+    command: npm run dev
+    networks:
+      - app-network

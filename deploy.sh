@@ -10,6 +10,19 @@ echo "🚀 Deploying to Hetzner Cloud..."
 echo "📥 Pulling latest changes from git..."
 git pull origin main
 
+echo "📦 Building assets..."
+# Zbuduj assety NA HOŚCIE (gdzie PHP i Node są dostępne)
+npm ci
+SKIP_WAYFINDER=false npm run build
+
+# Sprawdź czy build się udał
+if [ ! -d "public/build" ]; then
+    echo "❌ Build failed - public/build not found!"
+    exit 1
+fi
+
+echo "✅ Assets built successfully!"
+
 # Zatrzymaj kontenery
 echo "🛑 Stopping containers..."
 docker compose down
@@ -42,9 +55,13 @@ docker compose exec -T app php artisan config:cache
 docker compose exec -T app php artisan route:cache
 docker compose exec -T app php artisan view:cache
 
+# Wygeneruj Wayfinder routes (teraz PHP jest dostępne)
+echo "🗺️ Generating Wayfinder routes..."
+docker compose exec -T app php artisan wayfinder:generate --with-form || echo "⚠️ Wayfinder generation skipped"
+
 # Restart queue workers
 echo "🔄 Restarting queue workers..."
-docker compose exec -T app php artisan queue:restart
+docker compose exec -T app php artisan queue:restart || true
 
 # Czyszczenie starych obrazów Docker
 echo "🧹 Cleaning up old Docker images..."

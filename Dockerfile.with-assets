@@ -1,13 +1,11 @@
-# Dockerfile produkcyjny dla Hetzner CX23 (8GB RAM)
-# Laravel 12 + Inertia.js + Vue 3 + TypeScript
+# Multi-stage Dockerfile z buildem assetów
+# Opcjonalne - dla tych którzy chcą budować assety w Dockerze
+# UWAGA: Ten build może zawieść jeśli Wayfinder wymaga PHP
 # 
-# UWAGA: Ten Dockerfile NIE buduje assetów frontend!
-# Assety muszą być zbudowane NA HOŚCIE przed docker build:
-#   npm ci && npm run build
-# 
-# Dla buildu z assetami użyj: Dockerfile.with-assets
+# Użycie: docker build -f Dockerfile.with-assets -t app:latest .
 
-FROM php:8.2-fpm-alpine
+# Stage 1: Base - PHP 8.2 z rozszerzeniami
+FROM php:8.2-fpm-alpine AS base
 
 # Instalacja zależności systemowych i rozszerzeń PHP
 RUN apk add --no-cache \
@@ -50,6 +48,27 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Ustawienie katalogu roboczego
 WORKDIR /var/www/html
 
+# Stage 2: Node - budowanie assetów
+FROM node:20-alpine AS node
+
+WORKDIR /app
+
+# Kopiowanie plików package
+COPY package*.json ./
+
+# Instalacja zależności Node
+RUN npm ci --only=production=false
+
+# Kopiowanie kodu źródłowego
+COPY . .
+
+# Budowanie assetów z Vite (z pominięciem Wayfinder)
+ENV SKIP_WAYFINDER=true
+RUN npm run build
+
+# Stage 3: Production - finalna aplikacja
+FROM base AS production
+
 # Kopiowanie konfiguracji PHP
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
 
@@ -58,6 +77,9 @@ COPY --chown=www-data:www-data . /var/www/html
 
 # Instalacja zależności Composer (bez dev, z optymalizacją)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+
+# Kopiowanie zbudowanych assetów z stage Node
+COPY --from=node --chown=www-data:www-data /app/public/build /var/www/html/public/build
 
 # Ustawienie uprawnień dla storage i bootstrap/cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \

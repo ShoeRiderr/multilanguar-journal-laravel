@@ -1,5 +1,10 @@
 # Konfiguracja Docker Compose dla Laravel 12 + Inertia + Vue 3
 # Zoptymalizowane dla Hetzner Cloud CX23 (8GB RAM)
+# 
+# WAŻNE: Przed uruchomieniem zbuduj assety NA HOŚCIE:
+#   npm ci && npm run build
+# 
+# Następnie uruchom: docker compose up -d
 
 services:
   # PHP-FPM Application
@@ -7,7 +12,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: production
     image: multilanguar-journal-app:latest
     container_name: journal_app
     restart: unless-stopped
@@ -19,7 +23,8 @@ services:
       - REDIS_PORT=6379
     volumes:
       - ./:/var/www/html
-      - ./.env:/var/www/html/.env
+      # Assety zbudowane na hoście są dostępne w kontenerze
+      - ./public/build:/var/www/html/public/build
     networks:
       - app-network
     depends_on:

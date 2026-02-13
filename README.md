@@ -4,9 +4,9 @@ Aplikacja do prowadzenia wielojęzycznego dziennika online zbudowana z wykorzyst
 
 ## 🚀 Quick Start
 
-### Lokalne uruchomienie (Docker)
+### Lokalne uruchomienie (Development z hot reload)
 
-Najłatwiejszy sposób na uruchomienie projektu lokalnie to wykorzystanie Docker:
+Najprostszy sposób na uruchomienie projektu lokalnie z Vite dev server:
 
 ```bash
 # 1. Sklonuj repozytorium
@@ -16,30 +16,64 @@ cd multilanguar-journal-laravel
 # 2. Skopiuj plik środowiskowy
 cp .env.example .env
 
-# 3. Uruchom kontenery Docker
-docker compose up -d
+# 3. Uruchom w trybie dev (z hot reload)
+make dev
 
-# 4. Wygeneruj klucz aplikacji
+# 4. Setup aplikacji (w osobnym terminalu)
 docker compose exec app php artisan key:generate
-
-# 5. Uruchom migracje
 docker compose exec app php artisan migrate
-
-# 6. (Opcjonalnie) Zaseed'uj bazę danych
-docker compose exec app php artisan db:seed
 ```
 
-Aplikacja dostępna na: **http://localhost**
+Aplikacja dostępna: **http://localhost**  
+Vite dev server: **http://localhost:5173**
 
-### Alternatywnie: Używając Makefile
+### Lokalne uruchomienie (Production mode)
+
+Jeśli chcesz uruchomić w trybie produkcyjnym lokalnie:
 
 ```bash
-# Pierwsza instalacja
-make install
+# 1. Sklonuj repozytorium
+git clone https://github.com/ShoeRiderr/multilanguar-journal-laravel.git
+cd multilanguar-journal-laravel
 
-# Wyświetl wszystkie dostępne komendy
-make help
+# 2. Skopiuj plik środowiskowy
+cp .env.example .env
+
+# 3. Zbuduj assety i uruchom
+make build
+make prod
+
+# 4. Setup aplikacji
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate
 ```
+
+Aplikacja dostępna: **http://localhost**
+
+### Deployment na Hetzner Cloud (Production)
+
+Na serwerze produkcyjnym:
+
+```bash
+# Sklonuj repo na serwer
+git clone https://github.com/ShoeRiderr/multilanguar-journal-laravel.git
+cd multilanguar-journal-laravel
+
+# Skopiuj i skonfiguruj .env
+cp .env.production.example .env
+nano .env  # Edytuj konfigurację (DB_PASSWORD, APP_URL, etc.)
+
+# Uruchom deployment
+make deploy
+
+# Lub ręcznie:
+npm install && npm run build
+docker compose up -d
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate --force
+```
+
+📖 **Pełna dokumentacja deploymentu:** [docs/HETZNER_DEPLOYMENT.md](docs/HETZNER_DEPLOYMENT.md)
 
 ## 📦 Stack technologiczny
 

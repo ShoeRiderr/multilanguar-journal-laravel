@@ -715,6 +715,64 @@ sudo sysctl -p
 
 ## 🆘 Pomoc i troubleshooting
 
+### Problem: Vite build pada w Dockerze
+
+**Objawy:** `php: not found` podczas `npm run build` w Docker stage
+
+**Rozwiązanie:**
+```bash
+# Zbuduj assety NA HOŚCIE (przed docker build)
+npm install
+npm run build
+
+# Sprawdź czy build się udał
+ls -la public/build/  # Powinien pokazać pliki manifest.json i inne
+
+# Następnie uruchom Docker
+docker compose up -d
+```
+
+**Wyjaśnienie:** Plugin Wayfinder wymaga PHP do generowania route types. W Docker multi-stage build Node stage nie ma PHP, więc build zawodzi. Rozwiązanie: budujemy assety na hoście gdzie PHP jest dostępne, a Docker tylko kopiuje gotowe assety.
+
+### Problem: Build folder nie istnieje
+
+**Objawy:** `COPY --from=node /app/public/build - not found` podczas docker build
+
+**Rozwiązanie:** Upewnij się, że `npm run build` zakończył się sukcesem:
+```bash
+# Sprawdź czy build folder istnieje
+ls -la public/build/
+
+# Jeśli nie istnieje, zbuduj ponownie
+npm ci
+npm run build
+
+# Sprawdź logi pod kątem błędów
+echo $?  # Powinno być 0 (sukces)
+```
+
+### Problem: Wayfinder errors w Docker build
+
+**Objawy:** Błędy związane z `php artisan wayfinder:generate` podczas `npm run build`
+
+**Rozwiązanie:** Wayfinder wymaga PHP do generowania route types. W Dockerze generujemy go AFTER buildu:
+```bash
+# Po uruchomieniu kontenerów:
+docker compose exec app php artisan wayfinder:generate --with-form
+
+# Lub użyj deploy.sh który robi to automatycznie
+./deploy.sh
+```
+
+**Alternatywnie:** Użyj uproszczonego Dockerfile (bez buildu assetów w Dockerze):
+```bash
+# Zbuduj assety lokalnie
+npm ci && npm run build
+
+# Uruchom Docker (który używa gotowych assetów)
+docker compose up -d
+```
+
 ### Problem: Kontener się nie uruchamia
 
 ```bash

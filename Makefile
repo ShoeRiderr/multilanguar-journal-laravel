@@ -1,4 +1,4 @@
-.PHONY: help build up down restart logs shell mysql deploy optimize migrate fresh clean test
+.PHONY: help build up down restart logs shell mysql deploy optimize migrate fresh clean test dev prod assets
 
 # Makefile dla projektu Laravel + Docker
 # Użycie: make [command]
@@ -7,8 +7,39 @@ help: ## Pokaż tę pomoc
 	@echo "Dostępne komendy:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-build: ## Zbuduj obrazy Docker
-	docker compose build --no-cache
+dev: ## Uruchom lokalnie z hot reload (Vite dev server)
+	@echo "🚀 Starting development environment..."
+	@if [ ! -d "node_modules" ]; then \
+		echo "📦 Installing npm dependencies..."; \
+		npm install; \
+	fi
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+	@echo "✅ Dev environment uruchomiony!"
+	@echo "   App: http://localhost"
+	@echo "   Vite: http://localhost:5173"
+
+prod: assets ## Uruchom w trybie produkcyjnym
+	@echo "🚀 Starting production environment..."
+	docker compose up -d
+	@echo "✅ Production environment uruchomiony!"
+
+assets: ## Zbuduj assety (npm ci && npm run build)
+	@echo "📦 Building assets..."
+	npm ci
+	npm run build
+	@if [ ! -d "public/build" ]; then \
+		echo "❌ Build failed - public/build not found!"; \
+		exit 1; \
+	fi
+	@echo "✅ Assets built successfully!"
+
+build: assets ## Zbuduj assety i kontenery Docker
+	@echo "🐳 Building Docker containers..."
+	docker compose build app
+	@echo "✅ Build complete!"
+
+deploy: ## Deploy na serwer (uruchom deploy.sh)
+	./deploy.sh
 
 up: ## Uruchom kontenery w tle
 	docker compose up -d
@@ -31,17 +62,14 @@ logs-nginx: ## Pokaż logi Nginx
 logs-mysql: ## Pokaż logi MySQL
 	docker compose logs -f mysql
 
-shell: ## Wejdź do kontenera app (bash)
-	docker compose exec app bash
+shell: ## Wejdź do kontenera app (bash/sh)
+	docker compose exec app sh
 
 mysql: ## Wejdź do konsoli MySQL
 	docker compose exec mysql mysql -u root -p
 
 redis-cli: ## Wejdź do konsoli Redis
 	docker compose exec redis redis-cli
-
-deploy: ## Uruchom pełny deployment (pull, build, migrate, optimize)
-	./deploy.sh
 
 optimize: ## Optymalizuj Laravel (config, route, view cache)
 	docker compose exec app php artisan optimize
@@ -91,14 +119,15 @@ status: ## Pokaż status kontenerów
 stats: ## Pokaż użycie zasobów przez kontenery
 	docker stats --no-stream
 
-install: ## Pierwsza instalacja (build, up, migrate)
+install: assets ## Pierwsza instalacja (build assety, build Docker, up, migrate)
 	docker compose build
 	docker compose up -d
-	@echo "Waiting for MySQL to be ready..."
+	@echo "⏳ Waiting for MySQL to be ready..."
 	@sleep 15
+	docker compose exec app php artisan key:generate || true
 	docker compose exec app php artisan migrate --force
 	docker compose exec app php artisan optimize
-	@echo "Installation complete! Check http://localhost"
+	@echo "✅ Installation complete! Check http://localhost"
 
 npm-install: ## Zainstaluj npm dependencies (lokalnie)
 	npm install
@@ -120,7 +149,7 @@ backup-db: ## Backup bazy danych do pliku
 	docker compose exec mysql mysqldump -u root -p journal_db > backups/backup_$$(date +%Y%m%d_%H%M%S).sql
 	@echo "Backup created in backups/ directory"
 
-restore-db: ## Restore bazy danych z ostatniego backupu
+restore-db: ## Restore bazy danych z backupu (użyj: make restore-db file=backups/backup_20240101.sql)
 	@if [ -z "$(file)" ]; then echo "Usage: make restore-db file=backups/backup_20240101.sql"; exit 1; fi
 	docker compose exec -T mysql mysql -u root -p journal_db < $(file)
 	@echo "Database restored from $(file)"
