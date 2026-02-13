@@ -43,6 +43,9 @@ jobs:
       - name: Install NPM dependencies
         run: npm ci
 
+      - name: Generate Wayfinder routes (PHP available in CI)
+        run: php artisan wayfinder:generate --with-form
+
       - name: Build assets
         run: npm run build
 
@@ -100,6 +103,10 @@ jobs:
             # Uruchom migracje
             echo "🔄 Running database migrations..."
             docker compose exec -T app php artisan migrate --force
+            
+            # Wygeneruj Wayfinder routes
+            echo "🗺️  Generating Wayfinder routes..."
+            docker compose exec -T app php artisan wayfinder:generate --with-form
             
             # Optymalizacja Laravel
             echo "⚡ Optimizing Laravel..."

@@ -43,6 +43,10 @@ redis-cli: ## Wejdź do konsoli Redis
 deploy: ## Uruchom pełny deployment (pull, build, migrate, optimize)
 	./deploy.sh
 
+wayfinder: ## Wygeneruj Wayfinder routes (TypeScript types)
+	docker compose exec app php artisan wayfinder:generate --with-form
+	@echo "✅ Wayfinder routes wygenerowane!"
+
 optimize: ## Optymalizuj Laravel (config, route, view cache)
 	docker compose exec app php artisan optimize
 	docker compose exec app php artisan config:cache

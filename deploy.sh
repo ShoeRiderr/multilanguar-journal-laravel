@@ -35,6 +35,10 @@ echo "✅ MySQL is up!"
 echo "🔄 Running database migrations..."
 docker compose exec -T app php artisan migrate --force
 
+# Wygeneruj Wayfinder routes
+echo "🗺️  Generating Wayfinder routes..."
+docker compose exec -T app php artisan wayfinder:generate --with-form
+
 # Optymalizacja Laravel
 echo "⚡ Optimizing Laravel..."
 docker compose exec -T app php artisan optimize
