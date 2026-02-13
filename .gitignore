@@ -32,3 +32,11 @@ docker-compose.override.yml
 docker/nginx/ssl/*.pem
 docker/nginx/ssl/*.crt
 docker/nginx/ssl/*.key
+
+# Backup files
+*.backup
+Dockerfile.backup
+deploy.sh.backup
+docker-compose.yml.backup
+Makefile.backup
+

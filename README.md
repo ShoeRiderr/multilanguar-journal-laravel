@@ -4,54 +4,71 @@ Aplikacja do prowadzenia wielojęzycznego dziennika online zbudowana z wykorzyst
 
 ## 🚀 Quick Start
 
-### Lokalne uruchomienie (Docker)
-
-Najłatwiejszy sposób na uruchomienie projektu lokalnie to wykorzystanie Docker:
+### Lokalne uruchomienie (Development z hot reload)
 
 ```bash
-# 1. Sklonuj repozytorium
+# 1. Clone repo
 git clone https://github.com/ShoeRiderr/multilanguar-journal-laravel.git
 cd multilanguar-journal-laravel
 
-# 2. Skopiuj plik środowiskowy
+# 2. Skopiuj .env
 cp .env.example .env
 
-# 3. Uruchom kontenery Docker
-docker compose up -d
+# 3. Uruchom backend (Docker)
+docker compose up -d app mysql redis
 
-# 4. Wygeneruj klucz aplikacji
+# 4. Setup Laravel
 docker compose exec app php artisan key:generate
-
-# 5. Uruchom migracje
 docker compose exec app php artisan migrate
 
-# 6. Wygeneruj Wayfinder routes (dla TypeScript types)
-docker compose exec app php artisan wayfinder:generate --with-form
-
-# 7. (Opcjonalnie) Zaseed'uj bazę danych
-docker compose exec app php artisan db:seed
-```
-
-Aplikacja dostępna na: **http://localhost**
-
-### Development z hot reload
-
-```bash
-# Terminal 1 - Backend (Docker)
-docker compose up -d
-
-# Terminal 2 - Frontend (Vite dev server)
+# 5. Uruchom Vite dev server (hot reload)
 npm install
 npm run dev
 ```
 
-Vite dev server automatycznie wygeneruje Wayfinder routes gdy PHP jest dostępne.
+Aplikacja: http://localhost  
+Vite HMR: http://localhost:5173
+
+### Deployment na Hetzner Cloud
+
+**Wymagania na serwerze:**
+- Docker + Docker Compose
+- Node.js 20+ (do buildu assetów)
+
+```bash
+# Na serwerze:
+git clone https://github.com/ShoeRiderr/multilanguar-journal-laravel.git
+cd multilanguar-journal-laravel
+
+# Setup
+make install     # Kopiuje .env.example -> .env
+nano .env        # Edytuj konfigurację
+
+# Deploy
+make deploy      # Wszystko automatycznie!
+```
+
+Pełna dokumentacja: [docs/HETZNER_DEPLOYMENT.md](docs/HETZNER_DEPLOYMENT.md)
+
+## 🏗️ Architektura buildu
+
+**Development:**
+- Backend: Docker (app, mysql, redis)
+- Frontend: Vite dev server (hot reload)
+- Wayfinder: Działa lokalnie (npm run dev)
+
+**Production build:**
+1. Backend UP (docker compose up -d app mysql)
+2. Build assetów NA HOŚCIE (npm run build)
+   - Wayfinder używa: `docker compose exec app php artisan`
+3. Rebuild image (kopiuje public/build)
+4. Deploy (docker compose up -d)
 
 ### Alternatywnie: Używając Makefile
 
 ```bash
-# Pierwsza instalacja
-make install
+# Development mode
+make dev         # Uruchom backend + frontend z hot reload
 
 # Wyświetl wszystkie dostępne komendy
 make help
@@ -119,21 +136,23 @@ Po skonfigurowaniu GitHub Actions, każdy push do branch `main` automatycznie:
 ### Używając Makefile (zalecane)
 
 ```bash
-make help              # Pokaż wszystkie dostępne komendy
-make build             # Zbuduj obrazy Docker
-make up                # Uruchom kontenery
-make down              # Zatrzymaj kontenery
-make logs              # Pokaż logi (wszystkie kontenery)
-make logs-app          # Pokaż logi aplikacji
-make shell             # Wejdź do kontenera app (bash)
-make mysql             # Wejdź do konsoli MySQL
-make deploy            # Uruchom pełny deployment
-make optimize          # Optymalizuj Laravel (cache)
-make migrate           # Uruchom migracje
-make test              # Uruchom testy
-make clean             # Wyczyść cache Laravel
-make status            # Pokaż status kontenerów
-make backup-db         # Backup bazy danych
+make help        # Lista wszystkich komend
+make dev         # Development mode (backend + frontend)
+make build       # Zbuduj assety (wymaga działającego backendu)
+make deploy      # Deploy na produkcję (full flow)
+make up          # Uruchom kontenery
+make down        # Zatrzymaj kontenery
+make logs        # Logi wszystkich kontenerów
+make logs-app    # Logi tylko app
+make shell       # Shell w kontenerze app
+make mysql       # MySQL CLI
+make wayfinder   # Regeneruj Wayfinder routes
+make optimize    # Optymalizuj Laravel (cache)
+make migrate     # Uruchom migracje
+make test        # Uruchom testy
+make clean       # Wyczyść wszystko (kontenery + volumes)
+make status      # Pokaż status kontenerów
+make backup-db   # Backup bazy danych
 ```
 
 ### Docker Compose

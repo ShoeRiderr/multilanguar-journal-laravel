@@ -1,25 +1,23 @@
-# Konfiguracja Docker Compose dla Laravel 12 + Inertia + Vue 3
-# Zoptymalizowane dla Hetzner Cloud CX23 (8GB RAM)
+version: '3.8'
 
 services:
-  # PHP-FPM Application
   app:
     build:
       context: .
       dockerfile: Dockerfile
-      target: production
-    image: multilanguar-journal-app:latest
-    container_name: journal_app
+    container_name: journal-app
     restart: unless-stopped
     working_dir: /var/www/html
-    environment:
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
     volumes:
       - ./:/var/www/html
-      - ./.env:/var/www/html/.env
+      # Assets zbudowane na hoście są dostępne przez volume
+      - ./public/build:/var/www/html/public/build
+    environment:
+      DB_HOST: mysql
+      DB_DATABASE: ${DB_DATABASE:-journal_db}
+      DB_USERNAME: ${DB_USERNAME:-journal_user}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
     networks:
       - app-network
     depends_on:
@@ -27,103 +25,61 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-    healthcheck:
-      test: ["CMD-SHELL", "php-fpm -t || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
 
-  # Nginx Web Server
   nginx:
     image: nginx:alpine
-    container_name: journal_nginx
+    container_name: journal-nginx
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - ./:/var/www/html
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./docker/nginx/ssl:/etc/nginx/ssl
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
     networks:
       - app-network
     depends_on:
       - app
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
 
-  # MySQL Database
   mysql:
     image: mysql:8.0
-    container_name: journal_mysql
+    container_name: journal-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
       MYSQL_DATABASE: ${DB_DATABASE:-journal_db}
       MYSQL_USER: ${DB_USERNAME:-journal_user}
       MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
-      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_secret}
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
     ports:
       - "127.0.0.1:3306:3306"
     networks:
       - app-network
-    command: --default-authentication-plugin=mysql_native_password
-    deploy:
-      resources:
-        limits:
-          memory: 3G
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-secret}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root_secret}"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
 
-  # Redis Cache & Sessions
   redis:
     image: redis:alpine
-    container_name: journal_redis
+    container_name: journal-redis
     restart: unless-stopped
-    command: redis-server --appendonly yes
     volumes:
       - redis-data:/data
     networks:
       - app-network
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
 
-# Named volumes dla persystencji danych
 volumes:
   mysql-data:
     driver: local
   redis-data:
     driver: local
 
-# Sieć prywatna dla kontenerów
 networks:
   app-network:
     driver: bridge

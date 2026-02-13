@@ -1,60 +1,73 @@
 #!/bin/bash
-# Skrypt do ręcznego deploymentu aplikacji na Hetzner Cloud
-# Użycie: ./deploy.sh
-
 set -e
 
 echo "🚀 Deploying to Hetzner Cloud..."
+echo ""
 
-# Pull najnowszych zmian
-echo "📥 Pulling latest changes from git..."
+# 1. Pull latest code
+echo "📥 Pulling latest changes..."
 git pull origin main
 
-# Zatrzymaj kontenery
-echo "🛑 Stopping containers..."
-docker compose down
+# 2. Uruchom backend (app + mysql) PRZED buildem assetów
+echo "🐳 Starting backend containers (needed for Wayfinder)..."
+docker compose up -d app mysql redis
 
-# Zbuduj nowy obraz aplikacji
-echo "🔨 Building application image..."
-docker compose build --no-cache app
-
-# Uruchom kontenery
-echo "🚀 Starting containers..."
-docker compose up -d
-
-# Poczekaj na MySQL
+# 3. Poczekaj na MySQL
 echo "⏳ Waiting for MySQL to be ready..."
 until docker compose exec -T mysql mysqladmin ping -h localhost --silent 2>/dev/null; do
-    echo "MySQL is unavailable - sleeping"
+    echo "   MySQL is unavailable - sleeping"
     sleep 2
 done
-
 echo "✅ MySQL is up!"
 
-# Uruchom migracje
+# 4. Install Node dependencies (jeśli nie ma node_modules)
+if [ ! -d "node_modules" ]; then
+    echo "📦 Installing Node dependencies..."
+    npm ci
+fi
+
+# 5. KLUCZOWE: Build assetów NA HOŚCIE
+# Vite może teraz użyć: docker compose exec app php artisan
+echo "🔨 Building assets (Wayfinder will use: docker compose exec app php artisan)..."
+npm run build
+
+# Sprawdź czy build się udał
+if [ ! -d "public/build" ]; then
+    echo "❌ Build failed - public/build not found!"
+    exit 1
+fi
+echo "✅ Assets built successfully!"
+
+# 6. Rebuild Docker image (kopiuje zbudowane assety)
+echo "🐳 Rebuilding app container with fresh assets..."
+docker compose build --no-cache app
+
+# 7. Uruchom wszystkie kontenery
+echo "🚀 Starting all containers..."
+docker compose up -d
+
+# Poczekaj chwilę na restart
+sleep 3
+
+# 8. Migracje
 echo "🔄 Running database migrations..."
 docker compose exec -T app php artisan migrate --force
 
-# Wygeneruj Wayfinder routes
-echo "🗺️  Generating Wayfinder routes..."
-docker compose exec -T app php artisan wayfinder:generate --with-form
-
-# Optymalizacja Laravel
+# 9. Optymalizacja Laravel
 echo "⚡ Optimizing Laravel..."
-docker compose exec -T app php artisan optimize
 docker compose exec -T app php artisan config:cache
 docker compose exec -T app php artisan route:cache
 docker compose exec -T app php artisan view:cache
+docker compose exec -T app php artisan optimize
 
-# Restart queue workers
+# 10. Restart queue workers (jeśli używasz)
 echo "🔄 Restarting queue workers..."
-docker compose exec -T app php artisan queue:restart
+docker compose exec -T app php artisan queue:restart || true
 
-# Czyszczenie starych obrazów Docker
-echo "🧹 Cleaning up old Docker images..."
+# 11. Cleanup
+echo "🧹 Cleaning up Docker resources..."
 docker system prune -f
 
-# Pokaż status kontenerów
 echo ""
 echo "✅ Deployment complete!"
 echo ""
@@ -62,5 +75,7 @@ echo "📊 Container status:"
 docker compose ps
 
 echo ""
-echo "🎉 Application is ready!"
-echo "Check logs with: docker compose logs -f"
+echo "💡 Useful commands:"
+echo "   Logs:       docker compose logs -f"
+echo "   Shell:      docker compose exec app sh"
+echo "   Wayfinder:  docker compose exec app php artisan wayfinder:generate --with-form"
