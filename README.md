@@ -1,5 +1,7 @@
 # Multilingual Journal
 
+Tutaj zobaczysz stronę publicznie: https://codeitafterme.com
+
 Aplikacja do prowadzenia wielojęzycznego dziennika online zbudowana z wykorzystaniem nowoczesnego stosu technologicznego.
 
 ## 🚀 Quick Start
