@@ -17,7 +17,11 @@ class UserSeeder extends Seeder
         User::factory()
             ->count(10)
             ->state(new Sequence(
-                ['role' => UserRole::ADMIN->value],
+                [
+                    'role' => UserRole::ADMIN->value,
+                    'is_paid' => rand(0, 1),
+                    'free_trial_used' => rand(1, 10),
+                ],
                 ['role' => UserRole::USER->value],
             ))
             ->create();
