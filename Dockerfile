@@ -25,7 +25,7 @@ RUN composer install \
     --optimize-autoloader
 
 # Stage 2: Production - PHP-FPM
-FROM php:8.2-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # Instaluj zależności systemowe
 RUN apk add --no-cache \

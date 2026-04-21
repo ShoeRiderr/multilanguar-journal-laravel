@@ -16,7 +16,7 @@ class QueryFactory extends Factory
         return [
             'query_text' => $text,
             'normalized_query' => $normalized,
-            'query_hash' => hash('sha256', $normalized, uniqid()),
+            'query_hash' => hash('sha256', $normalized),
         ];
     }
 }

@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Query;
-use App\Models\AIResponse;
+use App\Models\AiResponse;
 
 class QuerySeeder extends Seeder
 {
@@ -16,7 +16,7 @@ class QuerySeeder extends Seeder
             ->each(function ($query) {
 
                 // each query has 1–2 cached responses
-                AIResponse::factory()
+                AiResponse::factory()
                     ->count(rand(1, 2))
                     ->create([
                         'query_id' => $query->id

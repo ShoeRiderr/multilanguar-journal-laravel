@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Models\Query;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class AIResponseFactory extends Factory
+class AiResponseFactory extends Factory
 {
     public function definition(): array
     {

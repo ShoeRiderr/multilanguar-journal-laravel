@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('user_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('user_id')
+            $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->foreignUuid('query_id')
+            $table->foreignId('query_id')
                 ->constrained('queries')
                 ->cascadeOnDelete();
 

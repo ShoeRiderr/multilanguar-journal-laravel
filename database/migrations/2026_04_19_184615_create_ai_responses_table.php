@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('ai_responses', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignUuid('query_id')
+            $table->foreignId('query_id')
                 ->constrained('queries')
                 ->cascadeOnDelete();
 
